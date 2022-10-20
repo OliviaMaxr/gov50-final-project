@@ -12,5 +12,5 @@ output:
 ## Project thoughts
 
 I am interested in exploring data related to the effect of COVID-19 in China on population, economics, and migration. 
-I have found a dataset on Work Bank that has information for me to work with: https://data.worldbank.org/country/china
+I have found a dataset on Work Bank that has information for me to work with: https://data.worldbank.org/country/china.
 I am planning to compare the 2021 data with the 2018 data (pre-COVID)
