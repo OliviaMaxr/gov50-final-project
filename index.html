@@ -115,7 +115,7 @@ code span.wa { color: #5e5e5e; font-style: italic; } /* Warning */
   <!--/radix_placeholder_rmarkdown_metadata-->
   
   <script type="text/json" id="radix-resource-manifest">
-  {"type":"character","attributes":{},"value":["API_CHN_DS2_en_csv_v2_4670670.zip","data/API_CHN_DS2_en_csv_v2_4670670.csv","data/Metadata_Country_API_CHN_DS2_en_csv_v2_4670670.csv","data/Metadata_Indicator_API_CHN_DS2_en_csv_v2_4670670.csv","index_files/anchor-4.2.2/anchor.min.js","index_files/bowser-1.9.3/bowser.min.js","index_files/distill-2.2.21/template.v2.js","index_files/header-attrs-2.16/header-attrs.js","index_files/header-attrs-2.17/header-attrs.js","index_files/jquery-3.6.0/jquery-3.6.0.js","index_files/jquery-3.6.0/jquery-3.6.0.min.js","index_files/jquery-3.6.0/jquery-3.6.0.min.map","index_files/popper-2.6.0/popper.min.js","index_files/tippy-6.2.7/tippy-bundle.umd.min.js","index_files/tippy-6.2.7/tippy-light-border.css","index_files/tippy-6.2.7/tippy.css","index_files/tippy-6.2.7/tippy.umd.min.js","index_files/webcomponents-2.0.0/webcomponents.js"]}
+  {"type":"character","attributes":{},"value":["coup.csv","index_files/anchor-4.2.2/anchor.min.js","index_files/bowser-1.9.3/bowser.min.js","index_files/distill-2.2.21/template.v2.js","index_files/header-attrs-2.16/header-attrs.js","index_files/header-attrs-2.17/header-attrs.js","index_files/jquery-3.6.0/jquery-3.6.0.js","index_files/jquery-3.6.0/jquery-3.6.0.min.js","index_files/jquery-3.6.0/jquery-3.6.0.min.map","index_files/popper-2.6.0/popper.min.js","index_files/tippy-6.2.7/tippy-bundle.umd.min.js","index_files/tippy-6.2.7/tippy-light-border.css","index_files/tippy-6.2.7/tippy.css","index_files/tippy-6.2.7/tippy.umd.min.js","index_files/webcomponents-2.0.0/webcomponents.js"]}
   </script>
   <!--radix_placeholder_navigation_in_header-->
   <!--/radix_placeholder_navigation_in_header-->
@@ -1517,10 +1517,14 @@ code span.wa { color: #5e5e5e; font-style: italic; } /* Warning */
 </div>
 
 <div class="d-article">
-<h2 id="project-thoughts">Project thoughts</h2>
-<p>I am interested in exploring data related to the effect of COVID-19 in China on population, economics, and migration.
-I have found a dataset on Work Bank that has information for me to work with: <a href="https://data.worldbank.org/country/china" class="uri">https://data.worldbank.org/country/china</a>
-I am planning to compare the 2021 data with the 2018 data (pre-COVID)</p>
+<div class="layout-chunk" data-layout="l-body">
+<div class="sourceCode">
+<pre class="sourceCode r"><code class="sourceCode r"><span><span class='kw'><a href='https://rdrr.io/r/base/library.html'>library</a></span><span class='op'>(</span><span class='va'><a href='https://tidyverse.tidyverse.org'>tidyverse</a></span><span class='op'>)</span></span>
+<span><span class='va'>coup</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://readr.tidyverse.org/reference/read_delim.html'>read_csv</a></span><span class='op'>(</span><span class='st'>"coup.csv"</span><span class='op'>)</span></span></code></pre>
+</div>
+</div>
+<h2 id="project-proposal">Project Proposal</h2>
+<p>What elements are more likely to lead to a successful coup d’état? In this study, I plan to examine the relation between explanatory variables (whether the coup was initiated by military, dissidents, rebels, existing government, foreign power, autocratic power, forced resignation, popular revolt or counter revolt) and the response variable (whether the coup was successful or not). All explanatory and response variables are measured in binary system. 0 in explanatory variables represents the lack of coup by this particular method and 1 the presence of coup by this particular method in explanatory variables. 0 in the response variables (unrealized == 1 and/or realized == 0) represents that this coup is not successful, whereas 1 (unrealized == 0 and/or realized == 1) represents that this coup is successful. Since there could be multiple methods present in one successful coup, I would like to build the multiple regression models and find the fit with the highest r^2 scores. I also would like to study which methods are more likely to appear together by doing regression models across different explanatory variables.</p>
 <div class="sourceCode" id="cb1"><pre class="sourceCode r distill-force-highlighting-css"><code class="sourceCode r"></code></pre></div>
 <!--radix_placeholder_article_footer-->
 <!--/radix_placeholder_article_footer-->

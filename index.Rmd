@@ -7,10 +7,14 @@ output:
     self_contained: false
 ---
 
+```{r}
+library(tidyverse)
+coup <- read_csv("coup.csv")
+```
 
 
-## Project thoughts
 
-I am interested in exploring data related to the effect of COVID-19 in China on population, economics, and migration. 
-I have found a dataset on Work Bank that has information for me to work with: https://data.worldbank.org/country/china.
-I am planning to compare the 2021 data with the 2018 data (pre-COVID)
+## Project Proposal
+
+What elements are more likely to lead to a successful coup d'état? In this study, I plan to examine the relation between explanatory variables (whether the coup was initiated by military, dissidents, rebels, existing government, foreign power, autocratic power, forced resignation, popular revolt or counter revolt) and the response variable (whether the coup was successful or not). All explanatory and response variables are measured in binary system. 0 in explanatory variables represents the lack of coup by this particular method and 1 the presence of coup by this particular method in explanatory variables. 0 in the response variables (unrealized == 1 and/or realized == 0) represents that this coup is not successful, whereas 1 (unrealized == 0 and/or realized == 1) represents that this coup is successful. Since there could be multiple methods present in one successful coup, I would like to build the multiple regression models and find the fit with the highest r^2 scores. I also would like to study which methods are more likely to appear together by doing regression models across different explanatory variables. 
+
