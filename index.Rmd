@@ -9,12 +9,99 @@ output:
 
 ```{r}
 library(tidyverse)
-coup <- read_csv("coup.csv")
+cj <- read_csv("data/response.csv")
 ```
 
 
 
 ## Project Proposal
 
-What elements are more likely to lead to a successful coup d'état? In this study, I plan to examine the relation between explanatory variables (whether the coup was initiated by military, dissidents, rebels, existing government, foreign power, autocratic power, forced resignation, popular revolt or counter revolt) and the response variable (whether the coup was successful or not). All explanatory and response variables are measured in binary system. 0 in explanatory variables represents the lack of coup by this particular method and 1 the presence of coup by this particular method in explanatory variables. 0 in the response variables (unrealized == 1 and/or realized == 0) represents that this coup is not successful, whereas 1 (unrealized == 0 and/or realized == 1) represents that this coup is successful. Since there could be multiple methods present in one successful coup, I would like to build the multiple regression models and find the fit with the highest r^2 scores. I also would like to study which methods are more likely to appear together by doing regression models across different explanatory variables. 
+To what extent can incarceration affect one's political belief? In this study, I plan to examine the relation between explanatory variables (gender, race, party, how often officers act in their favor, and how long respondent has been incarcerated in their current facility, and the response variable (whether their political belief has changed after incarceration (`politics_changed_since_incarcerated`). I hypothesize that as how often officers act in their favor increases (becomes more likely), their political belief will change less after incarceration if they are of the Republican part. 
+
+All explanatory and response variables are categorical variables. Hence I need to tidy the data into either binary system or numerical scale.
+
+Gender -- measured in TRUE and FALSE in `identifies_as_man` and `identifies_as_woman`
+Race -- measured in TRUE and FALSE in `identifies_as_hispanic_or_latinx`, `identifies_as_black`, `identifies_as_white`
+Party -- measured in Republican, measured in The Republican party, The Democratic party, Independent, NA in `party`
+how often officers act in their favor -- measured in Always, Very often, Sometimes, Rarely, Never, 	
+Don't know / No opinion, NA in `how_often_officials_act_in_your_interest`
+How long respondent has been incarcerated in their current facility -- measured in 10 years or less, Over 10 years, NA in `length_in_this_facility`
+Whether incarceration changed their political ideas -- measured in Yes, No, NA in `politics_changed_since_incarcerated`
+
+If I observe less change of political ideas among the Republicans for the same gender and race grouping, it will provide support for my hypothesis. If, on the other hand, I observe more change of political ideas among the Republicans for the same gender and race grouping, this would provide evidence against my hypothesis. 
+
+
+## Tidying data
+```{r}
+cj_tidy <- cj |>
+  mutate(gender = if_else(identifies_as_man == TRUE, "Man", "Woman"),
+         race = if_else(identifies_as_hispanic_or_latinx == TRUE, "Hispanic", if_else(identifies_as_black == TRUE, "Black", "White")),
+         interest = case_when(
+           (how_often_officials_acting_in_your_interest == "Always") ~ "Always",
+           (how_often_officials_acting_in_your_interest == "Very often") ~ "Very often",
+           (how_often_officials_acting_in_your_interest == "Sometimes") ~ "Sometimes",
+           (how_often_officials_acting_in_your_interest == "Rarely") ~ "Rarely",
+           (how_often_officials_acting_in_your_interest == "Never") ~ "Never",
+         ),
+         change = if_else(politics_changed_since_incarcerated == "Yes", 1, 0)) |>
+  select(gender, race, party, interest, length_in_this_facility, change) |>
+  drop_na()
+```
+
+## Data Visualization 
+```{r}
+cj_tidy |>
+  group_by(race, party) |>
+  summarise(mean_change = mean(change)) |>
+  pivot_wider(
+    names_from = party,
+    values_from = mean_change
+  )
+```
+```{r}
+cj_tidy |>
+  group_by(interest, party) |>
+  summarise(mean_change = mean(change)) |>
+  pivot_wider(
+    names_from = party,
+    values_from = mean_change
+  ) |>
+  mutate(ATE = `The Democratic party` - `The Republican party`)
+```
+
+```{r}
+library(infer)
+set.seed(01238)
+
+ate_cj <- cj_tidy |>
+  rep_slice_sample(prop = 1, replace = TRUE, reps = 1000) |>
+  group_by(replicate, interest, party) |>
+  summarise(mean_change = mean(change)) |>
+  pivot_wider(
+    names_from = c(interest, party),
+    values_from = mean_change
+  ) |>
+    mutate(ATE_Always = `Always_The Democratic party` - `Always_The Republican party`,
+         ATE_VO = `Very often_The Democratic party` - `Very often_The Republican party`,
+         ATE_Sometimes = `Sometimes_The Democratic party` - `Sometimes_The Republican party`,
+         ATE_Rarely = `Rarely_The Democratic party` - `Rarely_The Republican party`,
+         ATE_Never = `Never_The Democratic party` - `Never_The Republican party`) |>
+  select(ATE_Always, ATE_VO, ATE_Sometimes, ATE_Rarely, ATE_Never) |>
+  mutate(ATE_Diff = ATE_Always - ATE_Never)
+ate_cj
+```
+
+```{r}
+ate_cj_95 <- ate_cj |>
+  get_confidence_interval(level = 0.95, type = "percentile")
+ate_cj_95
+
+ate_cj_boot_distro <- ate_cj |>
+  ggplot(aes(x = ATE_Diff)) + geom_histogram(aes(y = ..density..)) +
+  geom_vline(xintercept = unlist(ate_cj_95)) +
+  labs(title = "Change in political ideologies for those favored by officials and those not",
+       subtitle = "n = 1000",
+       x = "Difference in ATE between incarcerated Democrats and Republicans")
+ate_cj_boot_distro
+```
 
