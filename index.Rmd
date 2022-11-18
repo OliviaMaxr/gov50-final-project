@@ -43,12 +43,64 @@ cj_tidy <- cj |>
            (how_often_officials_acting_in_your_interest == "Rarely") ~ "Rarely",
            (how_often_officials_acting_in_your_interest == "Never") ~ "Never",
          ),
+         weapons_ban = case_when(
+           (stance_on_assault_weapons_ban == "Undecided") ~ 0, 
+           (stance_on_assault_weapons_ban == "Oppose") ~ -1, 
+           (stance_on_assault_weapons_ban == "Strongly oppose") ~ -2,
+           (stance_on_assault_weapons_ban == "Support") ~ 2,
+           (stance_on_assault_weapons_ban == "Strongly support") ~ 3,
+         ),
+         marijuana = case_when(
+           (stance_on_marijuana_legalization == "Undecided") ~ 0, 
+           (stance_on_marijuana_legalization == "Oppose") ~ -1, 
+           (stance_on_marijuana_legalization == "Strongly oppose") ~ -2,
+           (stance_on_marijuana_legalization == "Support") ~ 2,
+           (stance_on_marijuana_legalization == "Strongly support") ~ 3,
+         ),
+         border_security = case_when(
+           (stance_on_tightening_border_security == "Undecided") ~ 0, 
+           (stance_on_tightening_border_security == "Oppose") ~ -1, 
+           (stance_on_tightening_border_security == "Strongly oppose") ~ -2,
+           (stance_on_tightening_border_security == "Support") ~ 2,
+           (stance_on_tightening_border_security == "Strongly support") ~ 3,
+         ),
+        min_wage = case_when(
+           (stance_on_raise_min_wage == "Undecided") ~ 0, 
+           (stance_on_raise_min_wage == "Oppose") ~ -1, 
+           (stance_on_raise_min_wage == "Strongly oppose") ~ -2,
+           (stance_on_raise_min_wage == "Support") ~ 2,
+           (stance_on_raise_min_wage == "Strongly support") ~ 3,
+         ),
          change = if_else(politics_changed_since_incarcerated == "Yes", 1, 0)) |>
-  select(gender, race, party, interest, length_in_this_facility, change) |>
+  select(gender, race, party, interest, length_in_this_facility, change, weapons_ban, marijuana, border_security, min_wage) |>
   drop_na()
+
+cj_tidy
 ```
 
 ## Data Visualization 
+
+### Regression Model
+
+```{r}
+library(broom)
+library(knitr)
+
+m1.lm <- lm(change ~ weapons_ban + marijuana + border_security + min_wage, data = cj_tidy)
+m1.lm |>
+  tidy() |>
+  knitr::kable(caption = "Coefficient Estimates for a Model Fitted to Estimate Variation in Change of Political Ideology",
+               col.names = c("Predictor", "Estimate", "Std. Error", "Statistic", "P Value"),
+               digits = 3)
+summary(m1.lm)
+```
+This regression examines what beliefs on criminal justice may contribute to the change in political ideologies after incarceration. 
+Since the independent variable (change in political ideology) is a binary variable, the intercept of 25.982 is the average outcome when all other predictors (stance on tighten weapon bans, marijuana legalization, tighten border security, and raise minimum wage) equal to 0. This suggest that even when a prisoner is undecided on these four issues, there is on average a 26% of chance that his/her political ideology will change after incarceration. When the prisoner is undecided on marijuana legalization, tighten border security, and raise minimum wage, the more strongly he/she support assault weapons ban (the support increase by 1 unit), the predicted change in political ideologies increase by approximately 6.12%. Similar analysis can be applied to marijuana legalization (predicted change in political ideologies increases by 0.13%), tighten border security (predicted change in political ideologies increases by 1.58%), and raise minimum wage (predicted change in political ideologies increases by 3%). Hence, opinions on assault weapon bans has the highest impact on the predicted change in political ideologies after incarceration. 
+
+However, this regression model can be further improved, as it has a R-squared value of 0.011, suggesting that only 1% of the observed variations is accounted for in this regression model. 
+
+
+### Bootstrap Sampling 
 ```{r}
 cj_tidy |>
   group_by(race, party) |>
@@ -57,6 +109,7 @@ cj_tidy |>
     names_from = party,
     values_from = mean_change
   )
+#the percentage of individuals whose political ideology has changed since incarceration, divided by race and party affiliation
 ```
 ```{r}
 cj_tidy |>
@@ -67,11 +120,15 @@ cj_tidy |>
     values_from = mean_change
   ) |>
   mutate(ATE = `The Democratic party` - `The Republican party`)
+
+#The percentage of individuals whose political ideology has changed since incarceration, divided by how often officers act in their favor and party affiliation
+#ATE: estimated average treatment effect between Democratic party and Republican party: The average difference in change of political ideology between Democratic party and Republican party, divided by how often officers act in their favor and party affiliation
 ```
 
 ```{r}
 library(infer)
 set.seed(01238)
+#bootstrap sample of 1000
 
 ate_cj <- cj_tidy |>
   rep_slice_sample(prop = 1, replace = TRUE, reps = 1000) |>
@@ -103,5 +160,12 @@ ate_cj_boot_distro <- ate_cj |>
        subtitle = "n = 1000",
        x = "Difference in ATE between incarcerated Democrats and Republicans")
 ate_cj_boot_distro
-```
 
+ggsave("histogram.png", width = 10, height = 5)
+```
+![](histogram.png)
+
+
+Analysis of the visualization:
+This is a visualization of a bootstrap sample of 1000 of variable `ATE_Diff`, which is difference in the estimated average treatment effect between Democratic party and Republican party in how their political ideology has changed after incarceration. The estimated average treatment effect is measure between those who report to be always favored by officers and those who report to be never favored by officers. 
+The above 95% confidence interval contains zero. It means that in 95% of the repeated samples, the difference between the ATE (Always - Never) of Democrats and Republicans is not definitively greater than 0. There is not strong enough evidence that the ATE of Democrats is higher than the ATE of Republicans. There is thus not strong enough evidence to support that how much prisoners are favored by officers has a causal relation with the change in political ideology after incarceration. 
