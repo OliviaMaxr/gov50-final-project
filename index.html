@@ -1524,89 +1524,82 @@ code span.wa { color: #5e5e5e; font-style: italic; } /* Warning */
 </div>
 </div>
 <h2 id="project-proposal">Project Proposal</h2>
-<p>To what extent can incarceration affect one’s political belief? In this study, I plan to examine the relation between explanatory variables (gender, race, party, how often officers act in their favor, and how long respondent has been incarcerated in their current facility, and the response variable (whether their political belief has changed after incarceration (<code>politics_changed_since_incarcerated</code>). I hypothesize that as how often officers act in their favor increases (becomes more likely), their political belief will change less after incarceration if they are of the Republican part.</p>
-<p>All explanatory and response variables are categorical variables. Hence I need to tidy the data into either binary system or numerical scale.</p>
-<p>Gender – measured in TRUE and FALSE in <code>identifies_as_man</code> and <code>identifies_as_woman</code>
+<p>What political beliefs on criminal justices can change criminals’ political ideologies after incarceration?</p>
+<p>In this study, I plan to examine what political beliefs (<code>stance_on_assault_weapons_ban</code>, <code>stance_on_marijuana_legalization</code>, <code>stance_on_tightening_border_security</code>, and<code>stance_on_raise_min_wage</code>) on criminal justice may contribute to the change in political views after incarceration (<code>politics_changed_since_incarcerated</code>).</p>
+<p>My null hypothesis is that the aforementioned political beliefs will not contribute to the change in political ideologies after incarceration.</p>
+<p>Political beliefs in <code>stance_on_assault_weapons_ban</code>, <code>stance_on_marijuana_legalization</code>, <code>stance_on_tightening_border_security</code>, and<code>stance_on_raise_min_wage</code> are measured in “Strongly support”, “Support”, “Undecided”, “Oppose”, “Strongly oppose” and are represented by numeric values <code>2</code>, <code>1</code>, <code>0</code>, <code>-1</code>, <code>-2</code> respectively. And change in political ideologies (<code>politics_changed_since_incarcerated</code>) is measured in “Yes”, “No”, “NA”, which I categorized into numerical values <code>1</code> for “Yes” and <code>0</code> for “No”.</p>
+<p>Additional explanatory variables (all categorical variables) that I used later in my project include:
+Gender – measured in TRUE and FALSE in <code>identifies_as_man</code> and <code>identifies_as_woman</code>
 Race – measured in TRUE and FALSE in <code>identifies_as_hispanic_or_latinx</code>, <code>identifies_as_black</code>, <code>identifies_as_white</code>
 Party – measured in Republican, measured in The Republican party, The Democratic party, Independent, NA in <code>party</code>
 how often officers act in their favor – measured in Always, Very often, Sometimes, Rarely, Never,<br />
 Don’t know / No opinion, NA in <code>how_often_officials_act_in_your_interest</code>
 How long respondent has been incarcerated in their current facility – measured in 10 years or less, Over 10 years, NA in <code>length_in_this_facility</code>
 Whether incarceration changed their political ideas – measured in Yes, No, NA in <code>politics_changed_since_incarcerated</code></p>
-<p>If I observe less change of political ideas among the Republicans for the same gender and race grouping, it will provide support for my hypothesis. If, on the other hand, I observe more change of political ideas among the Republicans for the same gender and race grouping, this would provide evidence against my hypothesis.</p>
+<p>After conducting a linear regression with <code>politics_changed_since_incarcerated</code> as my outcome variable, and <code>stance_on_assault_weapons_ban</code>, <code>stance_on_marijuana_legalization</code>, <code>stance_on_tightening_border_security</code>, and<code>stance_on_raise_min_wage</code>as my explanatory variable, I can either reject or not reject my null hypothesis (whether political ideologies changed or not) based on if the p-value is small enough. I can observe whether political stances will positively or negatively impact <code>politics_changed_since_incarcerated</code>. If the linear regression has a positive slope, it means that political stances will positively impact <code>politics_changed_since_incarcerated</code>, and vice versa.</p>
 <h2 id="tidying-data">Tidying data</h2>
 <div class="layout-chunk" data-layout="l-body">
 <div class="sourceCode">
 <pre class="sourceCode r"><code class="sourceCode r"><span><span class='va'>cj_tidy</span> <span class='op'>&lt;-</span> <span class='va'>cj</span> <span class='op'>|&gt;</span></span>
-<span>  <span class='fu'><a href='https://dplyr.tidyverse.org/reference/mutate.html'>mutate</a></span><span class='op'>(</span>gender <span class='op'>=</span> <span class='fu'><a href='https://dplyr.tidyverse.org/reference/if_else.html'>if_else</a></span><span class='op'>(</span><span class='va'>identifies_as_man</span> <span class='op'>==</span> <span class='cn'>TRUE</span>, <span class='st'>"Man"</span>, <span class='st'>"Woman"</span><span class='op'>)</span>,</span>
-<span>         race <span class='op'>=</span> <span class='fu'><a href='https://dplyr.tidyverse.org/reference/if_else.html'>if_else</a></span><span class='op'>(</span><span class='va'>identifies_as_hispanic_or_latinx</span> <span class='op'>==</span> <span class='cn'>TRUE</span>, <span class='st'>"Hispanic"</span>, <span class='fu'><a href='https://dplyr.tidyverse.org/reference/if_else.html'>if_else</a></span><span class='op'>(</span><span class='va'>identifies_as_black</span> <span class='op'>==</span> <span class='cn'>TRUE</span>, <span class='st'>"Black"</span>, <span class='st'>"White"</span><span class='op'>)</span><span class='op'>)</span>,</span>
-<span>         interest <span class='op'>=</span> <span class='fu'><a href='https://dplyr.tidyverse.org/reference/case_when.html'>case_when</a></span><span class='op'>(</span></span>
-<span>           <span class='op'>(</span><span class='va'>how_often_officials_acting_in_your_interest</span> <span class='op'>==</span> <span class='st'>"Always"</span><span class='op'>)</span> <span class='op'>~</span> <span class='st'>"Always"</span>,</span>
-<span>           <span class='op'>(</span><span class='va'>how_often_officials_acting_in_your_interest</span> <span class='op'>==</span> <span class='st'>"Very often"</span><span class='op'>)</span> <span class='op'>~</span> <span class='st'>"Very often"</span>,</span>
-<span>           <span class='op'>(</span><span class='va'>how_often_officials_acting_in_your_interest</span> <span class='op'>==</span> <span class='st'>"Sometimes"</span><span class='op'>)</span> <span class='op'>~</span> <span class='st'>"Sometimes"</span>,</span>
-<span>           <span class='op'>(</span><span class='va'>how_often_officials_acting_in_your_interest</span> <span class='op'>==</span> <span class='st'>"Rarely"</span><span class='op'>)</span> <span class='op'>~</span> <span class='st'>"Rarely"</span>,</span>
-<span>           <span class='op'>(</span><span class='va'>how_often_officials_acting_in_your_interest</span> <span class='op'>==</span> <span class='st'>"Never"</span><span class='op'>)</span> <span class='op'>~</span> <span class='st'>"Never"</span>,</span>
-<span>         <span class='op'>)</span>,</span>
-<span>         weapons_ban <span class='op'>=</span> <span class='fu'><a href='https://dplyr.tidyverse.org/reference/case_when.html'>case_when</a></span><span class='op'>(</span></span>
+<span>  <span class='fu'><a href='https://dplyr.tidyverse.org/reference/mutate.html'>mutate</a></span><span class='op'>(</span>weapons_ban <span class='op'>=</span> <span class='fu'><a href='https://dplyr.tidyverse.org/reference/case_when.html'>case_when</a></span><span class='op'>(</span></span>
 <span>           <span class='op'>(</span><span class='va'>stance_on_assault_weapons_ban</span> <span class='op'>==</span> <span class='st'>"Undecided"</span><span class='op'>)</span> <span class='op'>~</span> <span class='fl'>0</span>, </span>
 <span>           <span class='op'>(</span><span class='va'>stance_on_assault_weapons_ban</span> <span class='op'>==</span> <span class='st'>"Oppose"</span><span class='op'>)</span> <span class='op'>~</span> <span class='op'>-</span><span class='fl'>1</span>, </span>
 <span>           <span class='op'>(</span><span class='va'>stance_on_assault_weapons_ban</span> <span class='op'>==</span> <span class='st'>"Strongly oppose"</span><span class='op'>)</span> <span class='op'>~</span> <span class='op'>-</span><span class='fl'>2</span>,</span>
-<span>           <span class='op'>(</span><span class='va'>stance_on_assault_weapons_ban</span> <span class='op'>==</span> <span class='st'>"Support"</span><span class='op'>)</span> <span class='op'>~</span> <span class='fl'>2</span>,</span>
-<span>           <span class='op'>(</span><span class='va'>stance_on_assault_weapons_ban</span> <span class='op'>==</span> <span class='st'>"Strongly support"</span><span class='op'>)</span> <span class='op'>~</span> <span class='fl'>3</span>,</span>
+<span>           <span class='op'>(</span><span class='va'>stance_on_assault_weapons_ban</span> <span class='op'>==</span> <span class='st'>"Support"</span><span class='op'>)</span> <span class='op'>~</span> <span class='fl'>1</span>,</span>
+<span>           <span class='op'>(</span><span class='va'>stance_on_assault_weapons_ban</span> <span class='op'>==</span> <span class='st'>"Strongly support"</span><span class='op'>)</span> <span class='op'>~</span> <span class='fl'>2</span>,</span>
 <span>         <span class='op'>)</span>,</span>
 <span>         marijuana <span class='op'>=</span> <span class='fu'><a href='https://dplyr.tidyverse.org/reference/case_when.html'>case_when</a></span><span class='op'>(</span></span>
 <span>           <span class='op'>(</span><span class='va'>stance_on_marijuana_legalization</span> <span class='op'>==</span> <span class='st'>"Undecided"</span><span class='op'>)</span> <span class='op'>~</span> <span class='fl'>0</span>, </span>
 <span>           <span class='op'>(</span><span class='va'>stance_on_marijuana_legalization</span> <span class='op'>==</span> <span class='st'>"Oppose"</span><span class='op'>)</span> <span class='op'>~</span> <span class='op'>-</span><span class='fl'>1</span>, </span>
 <span>           <span class='op'>(</span><span class='va'>stance_on_marijuana_legalization</span> <span class='op'>==</span> <span class='st'>"Strongly oppose"</span><span class='op'>)</span> <span class='op'>~</span> <span class='op'>-</span><span class='fl'>2</span>,</span>
-<span>           <span class='op'>(</span><span class='va'>stance_on_marijuana_legalization</span> <span class='op'>==</span> <span class='st'>"Support"</span><span class='op'>)</span> <span class='op'>~</span> <span class='fl'>2</span>,</span>
-<span>           <span class='op'>(</span><span class='va'>stance_on_marijuana_legalization</span> <span class='op'>==</span> <span class='st'>"Strongly support"</span><span class='op'>)</span> <span class='op'>~</span> <span class='fl'>3</span>,</span>
+<span>           <span class='op'>(</span><span class='va'>stance_on_marijuana_legalization</span> <span class='op'>==</span> <span class='st'>"Support"</span><span class='op'>)</span> <span class='op'>~</span> <span class='fl'>1</span>,</span>
+<span>           <span class='op'>(</span><span class='va'>stance_on_marijuana_legalization</span> <span class='op'>==</span> <span class='st'>"Strongly support"</span><span class='op'>)</span> <span class='op'>~</span> <span class='fl'>2</span>,</span>
 <span>         <span class='op'>)</span>,</span>
 <span>         border_security <span class='op'>=</span> <span class='fu'><a href='https://dplyr.tidyverse.org/reference/case_when.html'>case_when</a></span><span class='op'>(</span></span>
 <span>           <span class='op'>(</span><span class='va'>stance_on_tightening_border_security</span> <span class='op'>==</span> <span class='st'>"Undecided"</span><span class='op'>)</span> <span class='op'>~</span> <span class='fl'>0</span>, </span>
 <span>           <span class='op'>(</span><span class='va'>stance_on_tightening_border_security</span> <span class='op'>==</span> <span class='st'>"Oppose"</span><span class='op'>)</span> <span class='op'>~</span> <span class='op'>-</span><span class='fl'>1</span>, </span>
 <span>           <span class='op'>(</span><span class='va'>stance_on_tightening_border_security</span> <span class='op'>==</span> <span class='st'>"Strongly oppose"</span><span class='op'>)</span> <span class='op'>~</span> <span class='op'>-</span><span class='fl'>2</span>,</span>
-<span>           <span class='op'>(</span><span class='va'>stance_on_tightening_border_security</span> <span class='op'>==</span> <span class='st'>"Support"</span><span class='op'>)</span> <span class='op'>~</span> <span class='fl'>2</span>,</span>
-<span>           <span class='op'>(</span><span class='va'>stance_on_tightening_border_security</span> <span class='op'>==</span> <span class='st'>"Strongly support"</span><span class='op'>)</span> <span class='op'>~</span> <span class='fl'>3</span>,</span>
+<span>           <span class='op'>(</span><span class='va'>stance_on_tightening_border_security</span> <span class='op'>==</span> <span class='st'>"Support"</span><span class='op'>)</span> <span class='op'>~</span> <span class='fl'>1</span>,</span>
+<span>           <span class='op'>(</span><span class='va'>stance_on_tightening_border_security</span> <span class='op'>==</span> <span class='st'>"Strongly support"</span><span class='op'>)</span> <span class='op'>~</span> <span class='fl'>2</span>,</span>
 <span>         <span class='op'>)</span>,</span>
 <span>        min_wage <span class='op'>=</span> <span class='fu'><a href='https://dplyr.tidyverse.org/reference/case_when.html'>case_when</a></span><span class='op'>(</span></span>
 <span>           <span class='op'>(</span><span class='va'>stance_on_raise_min_wage</span> <span class='op'>==</span> <span class='st'>"Undecided"</span><span class='op'>)</span> <span class='op'>~</span> <span class='fl'>0</span>, </span>
 <span>           <span class='op'>(</span><span class='va'>stance_on_raise_min_wage</span> <span class='op'>==</span> <span class='st'>"Oppose"</span><span class='op'>)</span> <span class='op'>~</span> <span class='op'>-</span><span class='fl'>1</span>, </span>
 <span>           <span class='op'>(</span><span class='va'>stance_on_raise_min_wage</span> <span class='op'>==</span> <span class='st'>"Strongly oppose"</span><span class='op'>)</span> <span class='op'>~</span> <span class='op'>-</span><span class='fl'>2</span>,</span>
-<span>           <span class='op'>(</span><span class='va'>stance_on_raise_min_wage</span> <span class='op'>==</span> <span class='st'>"Support"</span><span class='op'>)</span> <span class='op'>~</span> <span class='fl'>2</span>,</span>
-<span>           <span class='op'>(</span><span class='va'>stance_on_raise_min_wage</span> <span class='op'>==</span> <span class='st'>"Strongly support"</span><span class='op'>)</span> <span class='op'>~</span> <span class='fl'>3</span>,</span>
+<span>           <span class='op'>(</span><span class='va'>stance_on_raise_min_wage</span> <span class='op'>==</span> <span class='st'>"Support"</span><span class='op'>)</span> <span class='op'>~</span> <span class='fl'>1</span>,</span>
+<span>           <span class='op'>(</span><span class='va'>stance_on_raise_min_wage</span> <span class='op'>==</span> <span class='st'>"Strongly support"</span><span class='op'>)</span> <span class='op'>~</span> <span class='fl'>2</span>,</span>
 <span>         <span class='op'>)</span>,</span>
 <span>         change <span class='op'>=</span> <span class='fu'><a href='https://dplyr.tidyverse.org/reference/if_else.html'>if_else</a></span><span class='op'>(</span><span class='va'>politics_changed_since_incarcerated</span> <span class='op'>==</span> <span class='st'>"Yes"</span>, <span class='fl'>1</span>, <span class='fl'>0</span><span class='op'>)</span><span class='op'>)</span> <span class='op'>|&gt;</span></span>
-<span>  <span class='fu'><a href='https://dplyr.tidyverse.org/reference/select.html'>select</a></span><span class='op'>(</span><span class='va'>gender</span>, <span class='va'>race</span>, <span class='va'>party</span>, <span class='va'>interest</span>, <span class='va'>length_in_this_facility</span>, <span class='va'>change</span>, <span class='va'>weapons_ban</span>, <span class='va'>marijuana</span>, <span class='va'>border_security</span>, <span class='va'>min_wage</span><span class='op'>)</span> <span class='op'>|&gt;</span></span>
+<span>  <span class='fu'><a href='https://dplyr.tidyverse.org/reference/select.html'>select</a></span><span class='op'>(</span><span class='va'>party</span>, <span class='va'>change</span>, <span class='va'>weapons_ban</span>, <span class='va'>marijuana</span>, <span class='va'>border_security</span>, <span class='va'>min_wage</span><span class='op'>)</span> <span class='op'>|&gt;</span></span>
 <span>  <span class='fu'><a href='https://tidyr.tidyverse.org/reference/drop_na.html'>drop_na</a></span><span class='op'>(</span><span class='op'>)</span></span>
 <span></span>
 <span><span class='va'>cj_tidy</span></span></code></pre>
 </div>
-<pre><code># A tibble: 5,132 × 10
-   gender race  party   inter…¹ lengt…² change weapo…³ marij…⁴ borde…⁵
-   &lt;chr&gt;  &lt;chr&gt; &lt;chr&gt;   &lt;chr&gt;   &lt;chr&gt;    &lt;dbl&gt;   &lt;dbl&gt;   &lt;dbl&gt;   &lt;dbl&gt;
- 1 Woman  White Indepe… Rarely  10 yea…      1       3       0       2
- 2 Woman  White Indepe… Rarely  10 yea…      0      -2       3      -2
- 3 Woman  White Indepe… Rarely  10 yea…      0       3       3       2
- 4 Woman  White Indepe… Rarely  10 yea…      1       2      -1       0
- 5 Woman  White Indepe… Someti… 10 yea…      0      -2       3       3
- 6 Woman  White Indepe… Rarely  10 yea…      1       2       3      -2
- 7 Woman  White Indepe… Rarely  10 yea…      1       0       2      -1
- 8 Woman  White Indepe… Rarely  10 yea…      1      -1       2       3
- 9 Woman  White Indepe… Never   10 yea…      0       0       2       2
-10 Woman  White Indepe… Rarely  10 yea…      1      -2       3       2
-# … with 5,122 more rows, 1 more variable: min_wage &lt;dbl&gt;, and
-#   abbreviated variable names ¹​interest, ²​length_in_this_facility,
-#   ³​weapons_ban, ⁴​marijuana, ⁵​border_security</code></pre>
+<pre><code># A tibble: 7,600 × 6
+   party                change weapons_ban marijuana border_…¹ min_w…²
+   &lt;chr&gt;                 &lt;dbl&gt;       &lt;dbl&gt;     &lt;dbl&gt;     &lt;dbl&gt;   &lt;dbl&gt;
+ 1 Other                     0           2         1         2       2
+ 2 Other                     0           0         1         1       1
+ 3 The Democratic party      0           1         1         0       1
+ 4 The Democratic party      0           2         2         2       2
+ 5 The Democratic party      1          -2         2         1       2
+ 6 The Republican party      1           1         2         2       2
+ 7 Other                     0          -2         2        -2       2
+ 8 The Republican party      1           0         1         0       2
+ 9 The Republican party      0           2         2         2       2
+10 Other                     0           1         1         2      -2
+# … with 7,590 more rows, and abbreviated variable names
+#   ¹​border_security, ²​min_wage</code></pre>
 </div>
 <h2 id="data-visualization">Data Visualization</h2>
-<h3 id="regression-model">Regression Model</h3>
+<h3 id="regression-model-1">Regression Model 1</h3>
 <div class="layout-chunk" data-layout="l-body">
 <div class="sourceCode">
 <pre class="sourceCode r"><code class="sourceCode r"><span><span class='kw'><a href='https://rdrr.io/r/base/library.html'>library</a></span><span class='op'>(</span><span class='va'><a href='https://broom.tidymodels.org/'>broom</a></span><span class='op'>)</span></span>
 <span><span class='kw'><a href='https://rdrr.io/r/base/library.html'>library</a></span><span class='op'>(</span><span class='va'><a href='https://yihui.org/knitr/'>knitr</a></span><span class='op'>)</span></span>
 <span></span>
-<span><span class='va'>m1.lm</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/stats/lm.html'>lm</a></span><span class='op'>(</span><span class='va'>change</span> <span class='op'>~</span> <span class='va'>weapons_ban</span> <span class='op'>+</span> <span class='va'>marijuana</span> <span class='op'>+</span> <span class='va'>border_security</span> <span class='op'>+</span> <span class='va'>min_wage</span>, data <span class='op'>=</span> <span class='va'>cj_tidy</span><span class='op'>)</span></span>
-<span><span class='va'>m1.lm</span> <span class='op'>|&gt;</span></span>
+<span><span class='va'>change_multi</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/stats/lm.html'>lm</a></span><span class='op'>(</span><span class='va'>change</span> <span class='op'>~</span> <span class='va'>weapons_ban</span> <span class='op'>+</span> <span class='va'>marijuana</span> <span class='op'>+</span> <span class='va'>border_security</span> <span class='op'>+</span> <span class='va'>min_wage</span>, data <span class='op'>=</span> <span class='va'>cj_tidy</span><span class='op'>)</span></span>
+<span><span class='va'>change_multi</span> <span class='op'>|&gt;</span></span>
 <span>  <span class='fu'><a href='https://generics.r-lib.org/reference/tidy.html'>tidy</a></span><span class='op'>(</span><span class='op'>)</span> <span class='op'>|&gt;</span></span>
 <span>  <span class='fu'>knitr</span><span class='fu'>::</span><span class='fu'><a href='https://rdrr.io/pkg/knitr/man/kable.html'>kable</a></span><span class='op'>(</span>caption <span class='op'>=</span> <span class='st'>"Coefficient Estimates for a Model Fitted to Estimate Variation in Change of Political Ideology"</span>,</span>
 <span>               col.names <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"Predictor"</span>, <span class='st'>"Estimate"</span>, <span class='st'>"Std. Error"</span>, <span class='st'>"Statistic"</span>, <span class='st'>"P Value"</span><span class='op'>)</span>,</span>
@@ -1626,43 +1619,43 @@ Whether incarceration changed their political ideas – measured in Yes, No, NA 
 <tbody>
 <tr class="odd">
 <td style="text-align: left;">(Intercept)</td>
-<td style="text-align: right;">0.436</td>
-<td style="text-align: right;">0.017</td>
-<td style="text-align: right;">25.982</td>
+<td style="text-align: right;">0.460</td>
+<td style="text-align: right;">0.011</td>
+<td style="text-align: right;">43.689</td>
 <td style="text-align: right;">0.000</td>
 </tr>
 <tr class="even">
 <td style="text-align: left;">weapons_ban</td>
-<td style="text-align: right;">0.023</td>
+<td style="text-align: right;">0.035</td>
 <td style="text-align: right;">0.004</td>
-<td style="text-align: right;">6.212</td>
+<td style="text-align: right;">9.014</td>
 <td style="text-align: right;">0.000</td>
 </tr>
 <tr class="odd">
 <td style="text-align: left;">marijuana</td>
-<td style="text-align: right;">0.001</td>
+<td style="text-align: right;">-0.002</td>
 <td style="text-align: right;">0.005</td>
-<td style="text-align: right;">0.130</td>
-<td style="text-align: right;">0.897</td>
+<td style="text-align: right;">-0.289</td>
+<td style="text-align: right;">0.773</td>
 </tr>
 <tr class="even">
 <td style="text-align: left;">border_security</td>
-<td style="text-align: right;">0.006</td>
+<td style="text-align: right;">0.013</td>
 <td style="text-align: right;">0.004</td>
-<td style="text-align: right;">1.584</td>
-<td style="text-align: right;">0.113</td>
+<td style="text-align: right;">3.047</td>
+<td style="text-align: right;">0.002</td>
 </tr>
 <tr class="odd">
 <td style="text-align: left;">min_wage</td>
-<td style="text-align: right;">0.016</td>
-<td style="text-align: right;">0.005</td>
-<td style="text-align: right;">3.002</td>
+<td style="text-align: right;">0.017</td>
+<td style="text-align: right;">0.006</td>
+<td style="text-align: right;">2.921</td>
 <td style="text-align: right;">0.003</td>
 </tr>
 </tbody>
 </table>
 <div class="sourceCode">
-<pre class="sourceCode r"><code class="sourceCode r"><span><span class='fu'><a href='https://rdrr.io/r/base/summary.html'>summary</a></span><span class='op'>(</span><span class='va'>m1.lm</span><span class='op'>)</span></span></code></pre>
+<pre class="sourceCode r"><code class="sourceCode r"><span><span class='fu'><a href='https://rdrr.io/r/base/summary.html'>summary</a></span><span class='op'>(</span><span class='va'>change_multi</span><span class='op'>)</span></span></code></pre>
 </div>
 <pre><code>
 Call:
@@ -1671,143 +1664,171 @@ lm(formula = change ~ weapons_ban + marijuana + border_security +
 
 Residuals:
     Min      1Q  Median      3Q     Max 
--0.5732 -0.4754 -0.3806  0.5152  0.6547 
+-0.5925 -0.4764 -0.3811  0.5104  0.6732 
 
 Coefficients:
                  Estimate Std. Error t value Pr(&gt;|t|)    
-(Intercept)     0.4364952  0.0167998  25.982  &lt; 2e-16 ***
-weapons_ban     0.0228652  0.0036810   6.212 5.65e-10 ***
-marijuana       0.0006563  0.0050587   0.130  0.89678    
-border_security 0.0064001  0.0040411   1.584  0.11331    
-min_wage        0.0156567  0.0052154   3.002  0.00269 ** 
+(Intercept)      0.459661   0.010521  43.689  &lt; 2e-16 ***
+weapons_ban      0.035218   0.003907   9.014  &lt; 2e-16 ***
+marijuana       -0.001516   0.005249  -0.289  0.77280    
+border_security  0.013183   0.004327   3.047  0.00232 ** 
+min_wage         0.016501   0.005649   2.921  0.00350 ** 
 ---
 Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
 
-Residual standard error: 0.4973 on 5127 degrees of freedom
-Multiple R-squared:  0.011, Adjusted R-squared:  0.01023 
-F-statistic: 14.26 on 4 and 5127 DF,  p-value: 1.401e-11</code></pre>
+Residual standard error: 0.4963 on 7595 degrees of freedom
+Multiple R-squared:  0.01445,   Adjusted R-squared:  0.01393 
+F-statistic: 27.84 on 4 and 7595 DF,  p-value: &lt; 2.2e-16</code></pre>
+<div class="sourceCode">
+<pre class="sourceCode r"><code class="sourceCode r"><span><span class='fu'><a href='https://generics.r-lib.org/reference/tidy.html'>tidy</a></span><span class='op'>(</span><span class='va'>change_multi</span>, conf.int <span class='op'>=</span> <span class='cn'>TRUE</span>, conf.level <span class='op'>=</span> <span class='fl'>0.95</span><span class='op'>)</span><span class='op'>|&gt;</span></span>
+<span>  <span class='fu'>knitr</span><span class='fu'>::</span><span class='fu'><a href='https://rdrr.io/pkg/knitr/man/kable.html'>kable</a></span><span class='op'>(</span>digits <span class='op'>=</span> <span class='fl'>3</span><span class='op'>)</span></span></code></pre>
+</div>
+<table>
+<colgroup>
+<col style="width: 22%" />
+<col style="width: 12%" />
+<col style="width: 13%" />
+<col style="width: 13%" />
+<col style="width: 11%" />
+<col style="width: 12%" />
+<col style="width: 13%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th style="text-align: left;">term</th>
+<th style="text-align: right;">estimate</th>
+<th style="text-align: right;">std.error</th>
+<th style="text-align: right;">statistic</th>
+<th style="text-align: right;">p.value</th>
+<th style="text-align: right;">conf.low</th>
+<th style="text-align: right;">conf.high</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">(Intercept)</td>
+<td style="text-align: right;">0.460</td>
+<td style="text-align: right;">0.011</td>
+<td style="text-align: right;">43.689</td>
+<td style="text-align: right;">0.000</td>
+<td style="text-align: right;">0.439</td>
+<td style="text-align: right;">0.480</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">weapons_ban</td>
+<td style="text-align: right;">0.035</td>
+<td style="text-align: right;">0.004</td>
+<td style="text-align: right;">9.014</td>
+<td style="text-align: right;">0.000</td>
+<td style="text-align: right;">0.028</td>
+<td style="text-align: right;">0.043</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">marijuana</td>
+<td style="text-align: right;">-0.002</td>
+<td style="text-align: right;">0.005</td>
+<td style="text-align: right;">-0.289</td>
+<td style="text-align: right;">0.773</td>
+<td style="text-align: right;">-0.012</td>
+<td style="text-align: right;">0.009</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">border_security</td>
+<td style="text-align: right;">0.013</td>
+<td style="text-align: right;">0.004</td>
+<td style="text-align: right;">3.047</td>
+<td style="text-align: right;">0.002</td>
+<td style="text-align: right;">0.005</td>
+<td style="text-align: right;">0.022</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">min_wage</td>
+<td style="text-align: right;">0.017</td>
+<td style="text-align: right;">0.006</td>
+<td style="text-align: right;">2.921</td>
+<td style="text-align: right;">0.003</td>
+<td style="text-align: right;">0.005</td>
+<td style="text-align: right;">0.028</td>
+</tr>
+</tbody>
+</table>
 </div>
 <p>This regression examines what beliefs on criminal justice may contribute to the change in political ideologies after incarceration.
-Since the independent variable (change in political ideology) is a binary variable, the intercept of 25.982 is the average outcome when all other predictors (stance on tighten weapon bans, marijuana legalization, tighten border security, and raise minimum wage) equal to 0. This suggest that even when a prisoner is undecided on these four issues, there is on average a 26% of chance that his/her political ideology will change after incarceration. When the prisoner is undecided on marijuana legalization, tighten border security, and raise minimum wage, the more strongly he/she support assault weapons ban (the support increase by 1 unit), the predicted change in political ideologies increase by approximately 6.12%. Similar analysis can be applied to marijuana legalization (predicted change in political ideologies increases by 0.13%), tighten border security (predicted change in political ideologies increases by 1.58%), and raise minimum wage (predicted change in political ideologies increases by 3%). Hence, opinions on assault weapon bans has the highest impact on the predicted change in political ideologies after incarceration.</p>
-<p>However, this regression model can be further improved, as it has a R-squared value of 0.011, suggesting that only 1% of the observed variations is accounted for in this regression model.</p>
-<h3 id="bootstrap-sampling">Bootstrap Sampling</h3>
+Null hypothesis: Political beliefs on weapon ban, marijuana legalization, tightening border security, and raising minimum wage will not contribute to the change in political ideologies after incarceration.
+Since the independent variable (change in political ideology) is a binary variable, the point estimate of 0.459 is the average outcome when all other predictors (stance on tighten weapon bans, marijuana legalization, tighten border security, and raise minimum wage) equal to 0. This suggest that even when a prisoner is undecided on all these four issues, there is on average a 46% of chance that his/her political ideology will change after incarceration. When the prisoner is undecided on marijuana legalization, tighten border security, and raise minimum wage, the more strongly he/she support assault weapons ban (the support increase by 1 unit), the predicted change in political ideologies increase by approximately 3.5%. Similar analysis can be applied to marijuana legalization (predicted change in political ideologies decreases by 0.2%), tighten border security (predicted change in political ideologies increases by 1.3%), and raise minimum wage (predicted change in political ideologies increases by 1.7%). Hence, opinions on assault weapon bans has the highest impact on the predicted change in political ideologies after incarceration. However, this regression model can be further improved, as it has a R-squared value of 0.014, suggesting that only 1.4% of the observed variations is accounted for in this regression model.</p>
+<p>After conducting a hypothesis testing on the 95% confidence interval with the alpha-value being 0.05, we can conclude the following evaluation of the p-value:
+When the prisoners’ beliefs on marijuana legalization, tightening border security, and raising minimum wage remain the same, there is strong enough evidence to reject the null hypothesis and thus we can state that beliefs on weapon ban will contribute to the change in political ideology (p-value for <code>weapons_ban</code> is <code>0</code>)
+When the prisoners’ beliefs on weapon ban, tightening border security, and raising minimum wage remain the same, there is not strong enough evidence to reject the null hypothesis and thus we can state that beliefs on marijuana legalization ban will not contribute to the change in political ideology (p-value for <code>marijuana</code> is <code>0.773</code>)
+When the prisoners’ beliefs on weapon ban, marijuana legalization, and raising minimum wage remain the same, there is strong enough evidence to reject the null hypothesis and thus we can state that beliefs on tightening border security ban will contribute to the change in political ideology (p-value for <code>border_security</code> is <code>0.002</code>)
+When the prisoners’ beliefs on marijuana legalization, tightening border security, and weapon ban remain the same, there is strong enough evidence to reject the null hypothesis and thus we can state that beliefs on raising minimum wage will contribute to the change in political ideology (p-value for <code>min_wage</code> is <code>0.003</code>)</p>
+<p>In conclusion, in this multiple regression model, there is strong enough evidence to support that the prisoners’ political stances on weapon bans, tightening border security, and raising minimum wages will contribute to the change in political ideologies, whereas there is not strong enough evidence to state that their stances on marijuana legalization will.</p>
+<h3 id="regression-model-2-accounting-for-party-afflication">Regression Model 2: Accounting for Party Afflication</h3>
 <div class="layout-chunk" data-layout="l-body">
 <div class="sourceCode">
-<pre class="sourceCode r"><code class="sourceCode r"><span><span class='va'>cj_tidy</span> <span class='op'>|&gt;</span></span>
-<span>  <span class='fu'><a href='https://dplyr.tidyverse.org/reference/group_by.html'>group_by</a></span><span class='op'>(</span><span class='va'>race</span>, <span class='va'>party</span><span class='op'>)</span> <span class='op'>|&gt;</span></span>
-<span>  <span class='fu'><a href='https://dplyr.tidyverse.org/reference/summarise.html'>summarise</a></span><span class='op'>(</span>mean_change <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/mean.html'>mean</a></span><span class='op'>(</span><span class='va'>change</span><span class='op'>)</span><span class='op'>)</span> <span class='op'>|&gt;</span></span>
-<span>  <span class='fu'><a href='https://tidyr.tidyverse.org/reference/pivot_wider.html'>pivot_wider</a></span><span class='op'>(</span></span>
-<span>    names_from <span class='op'>=</span> <span class='va'>party</span>,</span>
-<span>    values_from <span class='op'>=</span> <span class='va'>mean_change</span></span>
-<span>  <span class='op'>)</span></span></code></pre>
+<pre class="sourceCode r"><code class="sourceCode r"><span><span class='va'>party_multi</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/stats/lm.html'>lm</a></span><span class='op'>(</span><span class='va'>change</span> <span class='op'>~</span> <span class='va'>weapons_ban</span> <span class='op'>+</span> <span class='va'>marijuana</span> <span class='op'>+</span> <span class='va'>border_security</span> <span class='op'>+</span> <span class='va'>min_wage</span> <span class='op'>+</span> <span class='fu'><a href='https://rdrr.io/r/base/factor.html'>factor</a></span><span class='op'>(</span><span class='va'>party</span><span class='op'>)</span>, data <span class='op'>=</span> <span class='va'>cj_tidy</span><span class='op'>)</span></span>
+<span><span class='va'>party_multi</span> <span class='op'>|&gt;</span></span>
+<span>  <span class='fu'><a href='https://generics.r-lib.org/reference/tidy.html'>tidy</a></span><span class='op'>(</span><span class='op'>)</span></span></code></pre>
 </div>
-<pre><code># A tibble: 3 × 5
-# Groups:   race [3]
-  race     Independent Other `The Democratic party` The Republican p…¹
-  &lt;chr&gt;          &lt;dbl&gt; &lt;dbl&gt;                  &lt;dbl&gt;              &lt;dbl&gt;
-1 Black          0.595 0.683                  0.522              0.662
-2 Hispanic       0.462 0.507                  0.548              0.692
-3 White          0.481 0.377                  0.473              0.477
-# … with abbreviated variable name ¹​`The Republican party`</code></pre>
+<pre><code># A tibble: 8 × 5
+  term                              estimate std.e…¹ stati…²   p.value
+  &lt;chr&gt;                                &lt;dbl&gt;   &lt;dbl&gt;   &lt;dbl&gt;     &lt;dbl&gt;
+1 (Intercept)                        0.477   0.0138   34.6   6.39e-244
+2 weapons_ban                        0.0351  0.00401   8.77  2.18e- 18
+3 marijuana                         -0.00167 0.00525  -0.317 7.51e-  1
+4 border_security                    0.00781 0.00458   1.70  8.83e-  2
+5 min_wage                           0.0171  0.00569   3.01  2.66e-  3
+6 factor(party)Other                -0.0836  0.0170   -4.92  8.88e-  7
+7 factor(party)The Democratic party -0.0180  0.0153   -1.17  2.42e-  1
+8 factor(party)The Republican party  0.0171  0.0160    1.07  2.84e-  1
+# … with abbreviated variable names ¹​std.error, ²​statistic</code></pre>
 <div class="sourceCode">
-<pre class="sourceCode r"><code class="sourceCode r"><span><span class='co'>#the percentage of individuals whose political ideology has changed since incarceration, divided by race and party affiliation</span></span></code></pre>
+<pre class="sourceCode r"><code class="sourceCode r"><span><span class='fu'><a href='https://rdrr.io/r/base/summary.html'>summary</a></span><span class='op'>(</span><span class='va'>party_multi</span><span class='op'>)</span></span></code></pre>
 </div>
+<pre><code>
+Call:
+lm(formula = change ~ weapons_ban + marijuana + border_security + 
+    min_wage + factor(party), data = cj_tidy)
+
+Residuals:
+    Min      1Q  Median      3Q     Max 
+-0.6176 -0.4743 -0.3384  0.5022  0.7129 
+
+Coefficients:
+                                   Estimate Std. Error t value
+(Intercept)                        0.477055   0.013782  34.615
+weapons_ban                        0.035130   0.004006   8.770
+marijuana                         -0.001665   0.005250  -0.317
+border_security                    0.007810   0.004581   1.705
+min_wage                           0.017095   0.005688   3.005
+factor(party)Other                -0.083629   0.017001  -4.919
+factor(party)The Democratic party -0.017953   0.015332  -1.171
+factor(party)The Republican party  0.017143   0.015996   1.072
+                                  Pr(&gt;|t|)    
+(Intercept)                        &lt; 2e-16 ***
+weapons_ban                        &lt; 2e-16 ***
+marijuana                          0.75115    
+border_security                    0.08827 .  
+min_wage                           0.00266 ** 
+factor(party)Other                8.88e-07 ***
+factor(party)The Democratic party  0.24164    
+factor(party)The Republican party  0.28390    
+---
+Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
+
+Residual standard error: 0.4952 on 7592 degrees of freedom
+Multiple R-squared:  0.01894,   Adjusted R-squared:  0.01804 
+F-statistic: 20.94 on 7 and 7592 DF,  p-value: &lt; 2.2e-16</code></pre>
 </div>
-<div class="layout-chunk" data-layout="l-body">
-<div class="sourceCode">
-<pre class="sourceCode r"><code class="sourceCode r"><span><span class='va'>cj_tidy</span> <span class='op'>|&gt;</span></span>
-<span>  <span class='fu'><a href='https://dplyr.tidyverse.org/reference/group_by.html'>group_by</a></span><span class='op'>(</span><span class='va'>interest</span>, <span class='va'>party</span><span class='op'>)</span> <span class='op'>|&gt;</span></span>
-<span>  <span class='fu'><a href='https://dplyr.tidyverse.org/reference/summarise.html'>summarise</a></span><span class='op'>(</span>mean_change <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/mean.html'>mean</a></span><span class='op'>(</span><span class='va'>change</span><span class='op'>)</span><span class='op'>)</span> <span class='op'>|&gt;</span></span>
-<span>  <span class='fu'><a href='https://tidyr.tidyverse.org/reference/pivot_wider.html'>pivot_wider</a></span><span class='op'>(</span></span>
-<span>    names_from <span class='op'>=</span> <span class='va'>party</span>,</span>
-<span>    values_from <span class='op'>=</span> <span class='va'>mean_change</span></span>
-<span>  <span class='op'>)</span> <span class='op'>|&gt;</span></span>
-<span>  <span class='fu'><a href='https://dplyr.tidyverse.org/reference/mutate.html'>mutate</a></span><span class='op'>(</span>ATE <span class='op'>=</span> <span class='va'>`The Democratic party`</span> <span class='op'>-</span> <span class='va'>`The Republican party`</span><span class='op'>)</span></span></code></pre>
-</div>
-<pre><code># A tibble: 5 × 6
-# Groups:   interest [5]
-  interest   Independent Other `The Democratic party` The Re…¹     ATE
-  &lt;chr&gt;            &lt;dbl&gt; &lt;dbl&gt;                  &lt;dbl&gt;    &lt;dbl&gt;   &lt;dbl&gt;
-1 Always           0.591 0.5                    0.524    0.510  0.0140
-2 Never            0.467 0.346                  0.540    0.599 -0.0585
-3 Rarely           0.529 0.464                  0.499    0.513 -0.0140
-4 Sometimes        0.474 0.391                  0.481    0.462  0.0197
-5 Very often       0.370 0.667                  0.489    0.381  0.109 
-# … with abbreviated variable name ¹​`The Republican party`</code></pre>
-<div class="sourceCode">
-<pre class="sourceCode r"><code class="sourceCode r"><span><span class='co'>#The percentage of individuals whose political ideology has changed since incarceration, divided by how often officers act in their favor and party affiliation</span></span>
-<span><span class='co'>#ATE: estimated average treatment effect between Democratic party and Republican party: The average difference in change of political ideology between Democratic party and Republican party, divided by how often officers act in their favor and party affiliation</span></span></code></pre>
-</div>
-</div>
-<div class="layout-chunk" data-layout="l-body">
-<div class="sourceCode">
-<pre class="sourceCode r"><code class="sourceCode r"><span><span class='kw'><a href='https://rdrr.io/r/base/library.html'>library</a></span><span class='op'>(</span><span class='va'><a href='https://github.com/tidymodels/infer'>infer</a></span><span class='op'>)</span></span>
-<span><span class='fu'><a href='https://rdrr.io/r/base/Random.html'>set.seed</a></span><span class='op'>(</span><span class='fl'>01238</span><span class='op'>)</span></span>
-<span><span class='co'>#bootstrap sample of 1000</span></span>
-<span></span>
-<span><span class='va'>ate_cj</span> <span class='op'>&lt;-</span> <span class='va'>cj_tidy</span> <span class='op'>|&gt;</span></span>
-<span>  <span class='fu'><a href='https://infer.tidymodels.org/reference/rep_sample_n.html'>rep_slice_sample</a></span><span class='op'>(</span>prop <span class='op'>=</span> <span class='fl'>1</span>, replace <span class='op'>=</span> <span class='cn'>TRUE</span>, reps <span class='op'>=</span> <span class='fl'>1000</span><span class='op'>)</span> <span class='op'>|&gt;</span></span>
-<span>  <span class='fu'><a href='https://dplyr.tidyverse.org/reference/group_by.html'>group_by</a></span><span class='op'>(</span><span class='va'>replicate</span>, <span class='va'>interest</span>, <span class='va'>party</span><span class='op'>)</span> <span class='op'>|&gt;</span></span>
-<span>  <span class='fu'><a href='https://dplyr.tidyverse.org/reference/summarise.html'>summarise</a></span><span class='op'>(</span>mean_change <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/mean.html'>mean</a></span><span class='op'>(</span><span class='va'>change</span><span class='op'>)</span><span class='op'>)</span> <span class='op'>|&gt;</span></span>
-<span>  <span class='fu'><a href='https://tidyr.tidyverse.org/reference/pivot_wider.html'>pivot_wider</a></span><span class='op'>(</span></span>
-<span>    names_from <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='va'>interest</span>, <span class='va'>party</span><span class='op'>)</span>,</span>
-<span>    values_from <span class='op'>=</span> <span class='va'>mean_change</span></span>
-<span>  <span class='op'>)</span> <span class='op'>|&gt;</span></span>
-<span>    <span class='fu'><a href='https://dplyr.tidyverse.org/reference/mutate.html'>mutate</a></span><span class='op'>(</span>ATE_Always <span class='op'>=</span> <span class='va'>`Always_The Democratic party`</span> <span class='op'>-</span> <span class='va'>`Always_The Republican party`</span>,</span>
-<span>         ATE_VO <span class='op'>=</span> <span class='va'>`Very often_The Democratic party`</span> <span class='op'>-</span> <span class='va'>`Very often_The Republican party`</span>,</span>
-<span>         ATE_Sometimes <span class='op'>=</span> <span class='va'>`Sometimes_The Democratic party`</span> <span class='op'>-</span> <span class='va'>`Sometimes_The Republican party`</span>,</span>
-<span>         ATE_Rarely <span class='op'>=</span> <span class='va'>`Rarely_The Democratic party`</span> <span class='op'>-</span> <span class='va'>`Rarely_The Republican party`</span>,</span>
-<span>         ATE_Never <span class='op'>=</span> <span class='va'>`Never_The Democratic party`</span> <span class='op'>-</span> <span class='va'>`Never_The Republican party`</span><span class='op'>)</span> <span class='op'>|&gt;</span></span>
-<span>  <span class='fu'><a href='https://dplyr.tidyverse.org/reference/select.html'>select</a></span><span class='op'>(</span><span class='va'>ATE_Always</span>, <span class='va'>ATE_VO</span>, <span class='va'>ATE_Sometimes</span>, <span class='va'>ATE_Rarely</span>, <span class='va'>ATE_Never</span><span class='op'>)</span> <span class='op'>|&gt;</span></span>
-<span>  <span class='fu'><a href='https://dplyr.tidyverse.org/reference/mutate.html'>mutate</a></span><span class='op'>(</span>ATE_Diff <span class='op'>=</span> <span class='va'>ATE_Always</span> <span class='op'>-</span> <span class='va'>ATE_Never</span><span class='op'>)</span></span>
-<span><span class='va'>ate_cj</span></span></code></pre>
-</div>
-<pre><code># A tibble: 1,000 × 7
-# Groups:   replicate [1,000]
-   replicate ATE_Always ATE_VO ATE_Someti…¹ ATE_Ra…² ATE_Ne…³ ATE_Diff
-       &lt;int&gt;      &lt;dbl&gt;  &lt;dbl&gt;        &lt;dbl&gt;    &lt;dbl&gt;    &lt;dbl&gt;    &lt;dbl&gt;
- 1         1    -0.0237 0.0750      0.0305  -0.0174  -0.122    0.0980 
- 2         2     0.263  0.106      -0.0263   0.0324  -0.0632   0.326  
- 3         3    -0.0570 0.368       0.00659  0.0439  -0.0555  -0.00154
- 4         4     0.0909 0.344       0.0192   0.0348  -0.182    0.273  
- 5         5    -0.0250 0.0766     -0.0137  -0.0217  -0.124    0.0993 
- 6         6     0.0887 0.0208      0.0166   0.0111  -0.00645  0.0952 
- 7         7     0.201  0.0740      0.0158  -0.0203  -0.0103   0.211  
- 8         8     0.0159 0.0318      0.0420  -0.0888   0.00440  0.0115 
- 9         9    -0.192  0.0800      0.0267  -0.0124  -0.0314  -0.161  
-10        10    -0.189  0.102       0.0259  -0.00231  0.00433 -0.194  
-# … with 990 more rows, and abbreviated variable names
-#   ¹​ATE_Sometimes, ²​ATE_Rarely, ³​ATE_Never</code></pre>
-</div>
-<div class="layout-chunk" data-layout="l-body">
-<div class="sourceCode">
-<pre class="sourceCode r"><code class="sourceCode r"><span><span class='va'>ate_cj_95</span> <span class='op'>&lt;-</span> <span class='va'>ate_cj</span> <span class='op'>|&gt;</span></span>
-<span>  <span class='fu'><a href='https://infer.tidymodels.org/reference/get_confidence_interval.html'>get_confidence_interval</a></span><span class='op'>(</span>level <span class='op'>=</span> <span class='fl'>0.95</span>, type <span class='op'>=</span> <span class='st'>"percentile"</span><span class='op'>)</span></span>
-<span><span class='va'>ate_cj_95</span></span></code></pre>
-</div>
-<pre><code># A tibble: 1 × 2
-  lower_ci upper_ci
-     &lt;dbl&gt;    &lt;dbl&gt;
-1   -0.230    0.342</code></pre>
-<div class="sourceCode">
-<pre class="sourceCode r"><code class="sourceCode r"><span><span class='va'>ate_cj_boot_distro</span> <span class='op'>&lt;-</span> <span class='va'>ate_cj</span> <span class='op'>|&gt;</span></span>
-<span>  <span class='fu'><a href='https://ggplot2.tidyverse.org/reference/ggplot.html'>ggplot</a></span><span class='op'>(</span><span class='fu'><a href='https://ggplot2.tidyverse.org/reference/aes.html'>aes</a></span><span class='op'>(</span>x <span class='op'>=</span> <span class='va'>ATE_Diff</span><span class='op'>)</span><span class='op'>)</span> <span class='op'>+</span> <span class='fu'><a href='https://ggplot2.tidyverse.org/reference/geom_histogram.html'>geom_histogram</a></span><span class='op'>(</span><span class='fu'><a href='https://ggplot2.tidyverse.org/reference/aes.html'>aes</a></span><span class='op'>(</span>y <span class='op'>=</span> <span class='va'>..density..</span><span class='op'>)</span><span class='op'>)</span> <span class='op'>+</span></span>
-<span>  <span class='fu'><a href='https://ggplot2.tidyverse.org/reference/geom_abline.html'>geom_vline</a></span><span class='op'>(</span>xintercept <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/unlist.html'>unlist</a></span><span class='op'>(</span><span class='va'>ate_cj_95</span><span class='op'>)</span><span class='op'>)</span> <span class='op'>+</span></span>
-<span>  <span class='fu'><a href='https://ggplot2.tidyverse.org/reference/labs.html'>labs</a></span><span class='op'>(</span>title <span class='op'>=</span> <span class='st'>"Change in political ideologies for those favored by officials and those not"</span>,</span>
-<span>       subtitle <span class='op'>=</span> <span class='st'>"n = 1000"</span>,</span>
-<span>       x <span class='op'>=</span> <span class='st'>"Difference in ATE between incarcerated Democrats and Republicans"</span><span class='op'>)</span></span>
-<span><span class='va'>ate_cj_boot_distro</span></span></code></pre>
-</div>
-<img src="index_files/figure-html5/unnamed-chunk-7-1.png" width="624" />
-<div class="sourceCode">
-<pre class="sourceCode r"><code class="sourceCode r"><span><span class='fu'><a href='https://ggplot2.tidyverse.org/reference/ggsave.html'>ggsave</a></span><span class='op'>(</span><span class='st'>"histogram.png"</span>, width <span class='op'>=</span> <span class='fl'>10</span>, height <span class='op'>=</span> <span class='fl'>5</span><span class='op'>)</span></span></code></pre>
-</div>
-</div>
-<p><img src="histogram.png" /></p>
-<p>Analysis of the visualization:
-This is a visualization of a bootstrap sample of 1000 of variable <code>ATE_Diff</code>, which is difference in the estimated average treatment effect between Democratic party and Republican party in how their political ideology has changed after incarceration. The estimated average treatment effect is measure between those who report to be always favored by officers and those who report to be never favored by officers.
-The above 95% confidence interval contains zero. It means that in 95% of the repeated samples, the difference between the ATE (Always - Never) of Democrats and Republicans is not definitively greater than 0. There is not strong enough evidence that the ATE of Democrats is higher than the ATE of Republicans. There is thus not strong enough evidence to support that how much prisoners are favored by officers has a causal relation with the change in political ideology after incarceration.</p>
-<div class="sourceCode" id="cb7"><pre class="sourceCode r distill-force-highlighting-css"><code class="sourceCode r"></code></pre></div>
+<p>The previous regression model only measures whether the criminals’ political beliefs have changed after incarceration. Hence, this multiple regression model accounts for their current party affiliation and examines whether their current party affiliation contributes to their change in political ideologies.
+Null hypothesis: Party affiliation is not related to the change in criminals’ political ideologies after incarceration
+<code>party</code> is a categorical value measured in “Other”, “The Democratic party”, “The Republican party”, and “Independent”. “Independent” is the baseline in this model.</p>
+<p>When the prisoners’ four political beliefs (<code>weapons_ban</code>, <code>marijuana</code>, <code>border_security</code>, and <code>min_wage</code>) equal to 0 (i.e. they are undecided about all these four issues), the predicted change of party affiliation percentage from Independent to Other is -8.36%, to Democratic party is -1.79%, and to Republican party is 1.71%. This means that criminals will be 8.36% less like to be in other parties than independent, 1.79% less likely to be in the Democratic party, and 1.71% more likely to be in the Republican party after incarceration.</p>
+<p>After conducting the hypothesis testing on a 95% confidence interval, we can conclude the following based on the p-value:
+When the prisoners’ beliefs on weapon ban, marijuana legalization, tightening border security, and raising minimum wage remain the same, there is strong enough evidence to reject the null hypothesis and thus state being in the Other party is related to the change in criminals’ political ideologies after incarceration (p-value for <code>factor(party)Other</code> is <code>8.88e-07</code>)
+When the prisoners’ beliefs on weapon ban, marijuana legalization, tightening border security, and raising minimum wage remain the same, there is not strong enough evidence to reject the null hypothesis and thus we can state being in the Democratic party is not related to the change in criminals’ political ideologies after incarceration (p-value for <code>factor(party)The Democratic party</code> is <code>0.24164</code>)
+When the prisoners’ beliefs on weapon ban, marijuana legalization, tightening border security, and raising minimum wage remain the same, there is not strong enough evidence to reject the null hypothesis and thus we can state being in the Republican party is not related to the change in criminals’ political ideologies after incarceration (p-value for <code>factor(party)The Republican party</code> is <code>0.28390</code>)</p>
+<p>In conclusion, in this multiple regression model, there is strong enough evidence to support that being in the Other party now is related to the change in political ideologies compared to being in the Independent party, whereas there is not strong enough evidence to state that being in the Democratic and Republican parties is related to the change in political ideologies compared to being in the Independent party.</p>
+<div class="sourceCode" id="cb5"><pre class="sourceCode r distill-force-highlighting-css"><code class="sourceCode r"></code></pre></div>
 <!--radix_placeholder_article_footer-->
 <!--/radix_placeholder_article_footer-->
 </div>

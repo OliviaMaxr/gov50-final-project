@@ -16,10 +16,15 @@ cj <- read_csv("data/response.csv")
 
 ## Project Proposal
 
-To what extent can incarceration affect one's political belief? In this study, I plan to examine the relation between explanatory variables (gender, race, party, how often officers act in their favor, and how long respondent has been incarcerated in their current facility, and the response variable (whether their political belief has changed after incarceration (`politics_changed_since_incarcerated`). I hypothesize that as how often officers act in their favor increases (becomes more likely), their political belief will change less after incarceration if they are of the Republican part. 
+What political beliefs on criminal justices can change criminals' political ideologies after incarceration?
 
-All explanatory and response variables are categorical variables. Hence I need to tidy the data into either binary system or numerical scale.
+In this study, I plan to examine what political beliefs (`stance_on_assault_weapons_ban`, `stance_on_marijuana_legalization`, `stance_on_tightening_border_security`, and`stance_on_raise_min_wage`) on criminal justice may contribute to the change in political views after incarceration (`politics_changed_since_incarcerated`). 
 
+My null hypothesis is that the aforementioned political beliefs will not contribute to the change in political ideologies after incarceration. 
+
+Political beliefs in `stance_on_assault_weapons_ban`, `stance_on_marijuana_legalization`, `stance_on_tightening_border_security`, and`stance_on_raise_min_wage` are measured in "Strongly support", "Support", "Undecided", "Oppose", "Strongly oppose" and are represented by numeric values `2`, `1`, `0`, `-1`, `-2` respectively. And change in political ideologies (`politics_changed_since_incarcerated`) is measured in "Yes", "No", "NA", which I categorized into numerical values `1` for "Yes" and `0` for "No". 
+
+Additional explanatory variables (all categorical variables) that I used later in my project include:
 Gender -- measured in TRUE and FALSE in `identifies_as_man` and `identifies_as_woman`
 Race -- measured in TRUE and FALSE in `identifies_as_hispanic_or_latinx`, `identifies_as_black`, `identifies_as_white`
 Party -- measured in Republican, measured in The Republican party, The Democratic party, Independent, NA in `party`
@@ -28,51 +33,41 @@ Don't know / No opinion, NA in `how_often_officials_act_in_your_interest`
 How long respondent has been incarcerated in their current facility -- measured in 10 years or less, Over 10 years, NA in `length_in_this_facility`
 Whether incarceration changed their political ideas -- measured in Yes, No, NA in `politics_changed_since_incarcerated`
 
-If I observe less change of political ideas among the Republicans for the same gender and race grouping, it will provide support for my hypothesis. If, on the other hand, I observe more change of political ideas among the Republicans for the same gender and race grouping, this would provide evidence against my hypothesis. 
-
+After conducting a linear regression with `politics_changed_since_incarcerated` as my outcome variable, and `stance_on_assault_weapons_ban`, `stance_on_marijuana_legalization`, `stance_on_tightening_border_security`, and`stance_on_raise_min_wage`as my explanatory variable, I can either reject or not reject my null hypothesis (whether political ideologies changed or not) based on if the p-value is small enough. I can observe whether political stances will positively or negatively impact `politics_changed_since_incarcerated`. If the linear regression has a positive slope, it means that political stances will positively impact `politics_changed_since_incarcerated`, and vice versa. 
 
 ## Tidying data
 ```{r}
 cj_tidy <- cj |>
-  mutate(gender = if_else(identifies_as_man == TRUE, "Man", "Woman"),
-         race = if_else(identifies_as_hispanic_or_latinx == TRUE, "Hispanic", if_else(identifies_as_black == TRUE, "Black", "White")),
-         interest = case_when(
-           (how_often_officials_acting_in_your_interest == "Always") ~ "Always",
-           (how_often_officials_acting_in_your_interest == "Very often") ~ "Very often",
-           (how_often_officials_acting_in_your_interest == "Sometimes") ~ "Sometimes",
-           (how_often_officials_acting_in_your_interest == "Rarely") ~ "Rarely",
-           (how_often_officials_acting_in_your_interest == "Never") ~ "Never",
-         ),
-         weapons_ban = case_when(
+  mutate(weapons_ban = case_when(
            (stance_on_assault_weapons_ban == "Undecided") ~ 0, 
            (stance_on_assault_weapons_ban == "Oppose") ~ -1, 
            (stance_on_assault_weapons_ban == "Strongly oppose") ~ -2,
-           (stance_on_assault_weapons_ban == "Support") ~ 2,
-           (stance_on_assault_weapons_ban == "Strongly support") ~ 3,
+           (stance_on_assault_weapons_ban == "Support") ~ 1,
+           (stance_on_assault_weapons_ban == "Strongly support") ~ 2,
          ),
          marijuana = case_when(
            (stance_on_marijuana_legalization == "Undecided") ~ 0, 
            (stance_on_marijuana_legalization == "Oppose") ~ -1, 
            (stance_on_marijuana_legalization == "Strongly oppose") ~ -2,
-           (stance_on_marijuana_legalization == "Support") ~ 2,
-           (stance_on_marijuana_legalization == "Strongly support") ~ 3,
+           (stance_on_marijuana_legalization == "Support") ~ 1,
+           (stance_on_marijuana_legalization == "Strongly support") ~ 2,
          ),
          border_security = case_when(
            (stance_on_tightening_border_security == "Undecided") ~ 0, 
            (stance_on_tightening_border_security == "Oppose") ~ -1, 
            (stance_on_tightening_border_security == "Strongly oppose") ~ -2,
-           (stance_on_tightening_border_security == "Support") ~ 2,
-           (stance_on_tightening_border_security == "Strongly support") ~ 3,
+           (stance_on_tightening_border_security == "Support") ~ 1,
+           (stance_on_tightening_border_security == "Strongly support") ~ 2,
          ),
         min_wage = case_when(
            (stance_on_raise_min_wage == "Undecided") ~ 0, 
            (stance_on_raise_min_wage == "Oppose") ~ -1, 
            (stance_on_raise_min_wage == "Strongly oppose") ~ -2,
-           (stance_on_raise_min_wage == "Support") ~ 2,
-           (stance_on_raise_min_wage == "Strongly support") ~ 3,
+           (stance_on_raise_min_wage == "Support") ~ 1,
+           (stance_on_raise_min_wage == "Strongly support") ~ 2,
          ),
          change = if_else(politics_changed_since_incarcerated == "Yes", 1, 0)) |>
-  select(gender, race, party, interest, length_in_this_facility, change, weapons_ban, marijuana, border_security, min_wage) |>
+  select(party, change, weapons_ban, marijuana, border_security, min_wage) |>
   drop_na()
 
 cj_tidy
@@ -80,92 +75,52 @@ cj_tidy
 
 ## Data Visualization 
 
-### Regression Model
+### Regression Model 1
 
 ```{r}
 library(broom)
 library(knitr)
 
-m1.lm <- lm(change ~ weapons_ban + marijuana + border_security + min_wage, data = cj_tidy)
-m1.lm |>
+change_multi <- lm(change ~ weapons_ban + marijuana + border_security + min_wage, data = cj_tidy)
+change_multi |>
   tidy() |>
   knitr::kable(caption = "Coefficient Estimates for a Model Fitted to Estimate Variation in Change of Political Ideology",
                col.names = c("Predictor", "Estimate", "Std. Error", "Statistic", "P Value"),
                digits = 3)
-summary(m1.lm)
+summary(change_multi)
+
+tidy(change_multi, conf.int = TRUE, conf.level = 0.95)|>
+  knitr::kable(digits = 3)
 ```
-This regression examines what beliefs on criminal justice may contribute to the change in political ideologies after incarceration. 
-Since the independent variable (change in political ideology) is a binary variable, the intercept of 25.982 is the average outcome when all other predictors (stance on tighten weapon bans, marijuana legalization, tighten border security, and raise minimum wage) equal to 0. This suggest that even when a prisoner is undecided on these four issues, there is on average a 26% of chance that his/her political ideology will change after incarceration. When the prisoner is undecided on marijuana legalization, tighten border security, and raise minimum wage, the more strongly he/she support assault weapons ban (the support increase by 1 unit), the predicted change in political ideologies increase by approximately 6.12%. Similar analysis can be applied to marijuana legalization (predicted change in political ideologies increases by 0.13%), tighten border security (predicted change in political ideologies increases by 1.58%), and raise minimum wage (predicted change in political ideologies increases by 3%). Hence, opinions on assault weapon bans has the highest impact on the predicted change in political ideologies after incarceration. 
+This regression examines what beliefs on criminal justice may contribute to the change in political ideologies after incarceration.
+Null hypothesis: Political beliefs on weapon ban, marijuana legalization, tightening border security, and raising minimum wage will not contribute to the change in political ideologies after incarceration. 
+Since the independent variable (change in political ideology) is a binary variable, the point estimate of 0.459 is the average outcome when all other predictors (stance on tighten weapon bans, marijuana legalization, tighten border security, and raise minimum wage) equal to 0. This suggest that even when a prisoner is undecided on all these four issues, there is on average a 46% of chance that his/her political ideology will change after incarceration. When the prisoner is undecided on marijuana legalization, tighten border security, and raise minimum wage, the more strongly he/she support assault weapons ban (the support increase by 1 unit), the predicted change in political ideologies increase by approximately 3.5%. Similar analysis can be applied to marijuana legalization (predicted change in political ideologies decreases by 0.2%), tighten border security (predicted change in political ideologies increases by 1.3%), and raise minimum wage (predicted change in political ideologies increases by 1.7%). Hence, opinions on assault weapon bans has the highest impact on the predicted change in political ideologies after incarceration. However, this regression model can be further improved, as it has a R-squared value of 0.014, suggesting that only 1.4% of the observed variations is accounted for in this regression model. 
 
-However, this regression model can be further improved, as it has a R-squared value of 0.011, suggesting that only 1% of the observed variations is accounted for in this regression model. 
+After conducting a hypothesis testing on the 95% confidence interval with the alpha-value being 0.05, we can conclude the following evaluation of the p-value: 
+When the prisoners' beliefs on marijuana legalization, tightening border security, and raising minimum wage remain the same, there is strong enough evidence to reject the null hypothesis and thus we can state that beliefs on weapon ban will contribute to the change in political ideology (p-value for `weapons_ban` is `0`)
+When the prisoners' beliefs on weapon ban, tightening border security, and raising minimum wage remain the same, there is not strong enough evidence to reject the null hypothesis and thus we can state that beliefs on marijuana legalization ban will not contribute to the change in political ideology (p-value for `marijuana` is `0.773`)
+When the prisoners' beliefs on weapon ban, marijuana legalization, and raising minimum wage remain the same, there is strong enough evidence to reject the null hypothesis and thus we can state that beliefs on tightening border security ban will contribute to the change in political ideology (p-value for `border_security` is `0.002`)
+When the prisoners' beliefs on marijuana legalization, tightening border security, and weapon ban remain the same, there is strong enough evidence to reject the null hypothesis and thus we can state that beliefs on raising minimum wage will contribute to the change in political ideology (p-value for `min_wage` is `0.003`)
 
+In conclusion, in this multiple regression model, there is strong enough evidence to support that the prisoners' political stances on weapon bans, tightening border security, and raising minimum wages will contribute to the change in political ideologies, whereas there is not strong enough evidence to state that their stances on marijuana legalization will. 
 
-### Bootstrap Sampling 
+### Regression Model 2: Accounting for Party Afflication 
 ```{r}
-cj_tidy |>
-  group_by(race, party) |>
-  summarise(mean_change = mean(change)) |>
-  pivot_wider(
-    names_from = party,
-    values_from = mean_change
-  )
-#the percentage of individuals whose political ideology has changed since incarceration, divided by race and party affiliation
+party_multi <- lm(change ~ weapons_ban + marijuana + border_security + min_wage + factor(party), data = cj_tidy)
+party_multi |>
+  tidy()
+
+summary(party_multi)
 ```
-```{r}
-cj_tidy |>
-  group_by(interest, party) |>
-  summarise(mean_change = mean(change)) |>
-  pivot_wider(
-    names_from = party,
-    values_from = mean_change
-  ) |>
-  mutate(ATE = `The Democratic party` - `The Republican party`)
+The previous regression model only measures whether the criminals' political beliefs have changed after incarceration. Hence, this multiple regression model accounts for their current party affiliation and examines whether their current party affiliation contributes to their change in political ideologies.
+Null hypothesis: Party affiliation is not related to the change in criminals' political ideologies after incarceration
+`party` is a categorical value measured in "Other", "The Democratic party", "The Republican party", and "Independent". "Independent" is the baseline in this model. 
 
-#The percentage of individuals whose political ideology has changed since incarceration, divided by how often officers act in their favor and party affiliation
-#ATE: estimated average treatment effect between Democratic party and Republican party: The average difference in change of political ideology between Democratic party and Republican party, divided by how often officers act in their favor and party affiliation
-```
+When the prisoners' four political beliefs (`weapons_ban`, `marijuana`, `border_security`, and `min_wage`) equal to 0 (i.e. they are undecided about all these four issues), the predicted change of party affiliation percentage from Independent to Other is -8.36%, to Democratic party is -1.79%, and to Republican party is 1.71%. This means that criminals will be 8.36% less like to be in other parties than independent, 1.79% less likely to be in the Democratic party, and 1.71% more likely to be in the Republican party after incarceration. 
 
-```{r}
-library(infer)
-set.seed(01238)
-#bootstrap sample of 1000
+After conducting the hypothesis testing on a 95% confidence interval, we can conclude the following based on the p-value:
+When the prisoners' beliefs on weapon ban, marijuana legalization, tightening border security, and raising minimum wage remain the same, there is strong enough evidence to reject the null hypothesis and thus state being in the Other party is related to the change in criminals' political ideologies after incarceration (p-value for `factor(party)Other` is `8.88e-07`)
+When the prisoners' beliefs on weapon ban, marijuana legalization, tightening border security, and raising minimum wage remain the same, there is not strong enough evidence to reject the null hypothesis and thus we can state being in the Democratic party is not related to the change in criminals' political ideologies after incarceration (p-value for `factor(party)The Democratic party` is `0.24164`)
+When the prisoners' beliefs on weapon ban, marijuana legalization, tightening border security, and raising minimum wage remain the same, there is not strong enough evidence to reject the null hypothesis and thus we can state being in the Republican party is not related to the change in criminals' political ideologies after incarceration (p-value for `factor(party)The Republican party` is `0.28390`)
 
-ate_cj <- cj_tidy |>
-  rep_slice_sample(prop = 1, replace = TRUE, reps = 1000) |>
-  group_by(replicate, interest, party) |>
-  summarise(mean_change = mean(change)) |>
-  pivot_wider(
-    names_from = c(interest, party),
-    values_from = mean_change
-  ) |>
-    mutate(ATE_Always = `Always_The Democratic party` - `Always_The Republican party`,
-         ATE_VO = `Very often_The Democratic party` - `Very often_The Republican party`,
-         ATE_Sometimes = `Sometimes_The Democratic party` - `Sometimes_The Republican party`,
-         ATE_Rarely = `Rarely_The Democratic party` - `Rarely_The Republican party`,
-         ATE_Never = `Never_The Democratic party` - `Never_The Republican party`) |>
-  select(ATE_Always, ATE_VO, ATE_Sometimes, ATE_Rarely, ATE_Never) |>
-  mutate(ATE_Diff = ATE_Always - ATE_Never)
-ate_cj
-```
-
-```{r}
-ate_cj_95 <- ate_cj |>
-  get_confidence_interval(level = 0.95, type = "percentile")
-ate_cj_95
-
-ate_cj_boot_distro <- ate_cj |>
-  ggplot(aes(x = ATE_Diff)) + geom_histogram(aes(y = ..density..)) +
-  geom_vline(xintercept = unlist(ate_cj_95)) +
-  labs(title = "Change in political ideologies for those favored by officials and those not",
-       subtitle = "n = 1000",
-       x = "Difference in ATE between incarcerated Democrats and Republicans")
-ate_cj_boot_distro
-
-ggsave("histogram.png", width = 10, height = 5)
-```
-![](histogram.png)
-
-
-Analysis of the visualization:
-This is a visualization of a bootstrap sample of 1000 of variable `ATE_Diff`, which is difference in the estimated average treatment effect between Democratic party and Republican party in how their political ideology has changed after incarceration. The estimated average treatment effect is measure between those who report to be always favored by officers and those who report to be never favored by officers. 
-The above 95% confidence interval contains zero. It means that in 95% of the repeated samples, the difference between the ATE (Always - Never) of Democrats and Republicans is not definitively greater than 0. There is not strong enough evidence that the ATE of Democrats is higher than the ATE of Republicans. There is thus not strong enough evidence to support that how much prisoners are favored by officers has a causal relation with the change in political ideology after incarceration. 
+In conclusion, in this multiple regression model, there is strong enough evidence to support that being in the Other party now is related to the change in political ideologies compared to being in the Independent party, whereas there is not strong enough evidence to state that being in the Democratic and Republican parties is related to the change in political ideologies compared to being in the Independent party. 
