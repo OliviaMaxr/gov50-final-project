@@ -79,6 +79,7 @@ change_bar <- cj_tidy |>
        x = "Change in Political Ideology",
        y = "Count of Change in Political Ideologies") +
   scale_x_discrete(labels = c("No", "Yes"))
+change_bar
 
 ggsave("change_barplot.png", width = 10, height = 5)
 ```
@@ -124,6 +125,7 @@ marijuana_bar <- cj_tidy |>
        x = "Support of Marijuana Legalization",
        y = "Count of Change in Political Ideologies") +
   scale_x_discrete(labels = c("Strongly Oppose", "Oppose", "Undecided", "Support", "Strongly Support"))
+marijuana_bar
 
 ggsave("marijuana_barplot.png", width = 10, height = 5)
 
