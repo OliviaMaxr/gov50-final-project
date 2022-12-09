@@ -1523,8 +1523,68 @@ code span.wa { color: #5e5e5e; font-style: italic; } /* Warning */
 <span><span class='va'>cj</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://readr.tidyverse.org/reference/read_delim.html'>read_csv</a></span><span class='op'>(</span><span class='st'>"data/response.csv"</span><span class='op'>)</span></span></code></pre>
 </div>
 </div>
+<h2 id="introduction">Introduction</h2>
+<p>Criminal justice and related policies always have been the center of U.S. political debates and elections. In the most recent 2022 U.S. midterm elections, topics such as legalization of marijuana, criminalization of abortion, and prison labor have all caught public attention (<a href="https://www.themarshallproject.org/2022/11/12/7-key-criminal-justice-takeaways-from-the-midterms" class="uri">https://www.themarshallproject.org/2022/11/12/7-key-criminal-justice-takeaways-from-the-midterms</a>). Yet very few policy makers have personal experience with incarceration. Then, for the incarcerated, how do stances on topics related to criminal justice relate to a change in the criminals’ political ideologies after incarceration? In this report, I examine this question by analyzing the correlation between criminals’ stances on political issues and whether their political ideologies have changed after incarceration. For further elaboration, I specifically examines the criminals’ stances on assault weapon ban, marijuana legalization, tightening border security, and raising minimum wages and how they relate to whether their political ideologies have changed after incarceration. My null hypothesis is that political stances on the aforementioned issues will not contribute to the change in political ideologies after incarceration. Through this report, I hope to bring in a new perspective on criminal justice, one coming from the point of views of the incarcerated.</p>
+<h2 id="data-description">Data Description</h2>
+<p>This project is based on the Marshall Project’s ongoing survey of the political views of incarcertated people in American prisons and jails:</p>
+<blockquote>
+<p>Bartley, Lawrence, Nicole Lewis, and Anna Flagg. 2017. “<a href="https://www.themarshallproject.org/2020/03/11/how-we-pulled-off-a-groundbreaking-political-survey-behind-bars">How We Pulled Off A Groundbreaking Political Survey Behind Bars.</a>” The Marshall Project.</p>
+</blockquote>
+<p>This is an observational study generated through a survey sent out to some prisons and jails in the U.S. in 2019. Responses were collected on a rolling basis until March, 2020. This survey received a total of 8266 responses. However, the survey was not able to reach all demographic and geographic regions, due to the limitation of collecting data from incarcerated population. 35 questions were asked in this survey, ranging from demographic information to issues related to criminal justice. In this report, I selected the following variables to examine the correlation in between.</p>
+<p>The data file for this study is <code>data/response.csv</code> and contains the following variables:</p>
+<table>
+<colgroup>
+<col style="width: 31%" />
+<col style="width: 68%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th style="text-align: left;">Name</th>
+<th style="text-align: left;">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;"><code>identifies_as_man</code></td>
+<td style="text-align: left;">does the respondent identify as man: <em>TRUE</em>, <em>FALSE</em>, <em>NA</em> if withheld</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"><code>identifies_as_woman</code></td>
+<td style="text-align: left;">does the respondent identify as woman: <em>TRUE</em>, <em>FALSE</em>, <em>NA</em> if withheld</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;"><code>party</code></td>
+<td style="text-align: left;">the respondent’s party affiliation</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"><code>stance_on_assault_weapons_ban</code></td>
+<td style="text-align: left;">the respondent’s opinion on assault weapons ban: “Strongly support”, “Support”, “Undecided”, “Oppose”, “Strongly oppose”</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;"><code>stance_on_marijuana_legalization</code></td>
+<td style="text-align: left;">the respondent’s opinion on marijuana legalization: “Strongly support”, “Support”, “Undecided”, “Oppose”, “Strongly oppose”</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"><code>stance_on_tightening_border_security</code></td>
+<td style="text-align: left;">the respondent’s opinion on tightening border security: “Strongly support”, “Support”, “Undecided”, “Oppose”, “Strongly oppose”</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;"><code>stance_on_raise_min_wage</code></td>
+<td style="text-align: left;">the respondent’s opinion on raising minimum wage: “Strongly support”, “Support”, “Undecided”, “Oppose”, “Strongly oppose”</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"><code>politics_changed_since_incarcerated</code></td>
+<td style="text-align: left;">whether the respondent’s political ideology has changed since incarceration; Yes”, “No”, “NA” if withheld</td>
+</tr>
+</tbody>
+</table>
+<ol start="2" type="1">
+<li>a data section that briefly describes the data source, describes how the key dependent and independent variables are measured (e.g., a survey, statistical model, or expert coding), and also produces a plot that summarizes the dependent variable;</li>
+<li>a results section that contains a scatterplot, barplot, or boxplot of the main relationship of interest and output for the main regression of interest; and</li>
+<li>a brief (one paragraph) concluding section that summarizes your results, assesses the extent to which you find support for your hypothesis, describes limitations of your analysis and threats to inference, and states how your analysis could be improved (e.g., improved data that would be useful to collect).</li>
+</ol>
 <h2 id="project-proposal">Project Proposal</h2>
-<p>What political beliefs on criminal justices can change criminals’ political ideologies after incarceration?</p>
+<p>What political beliefs on criminal justices are related to the change criminals’ political ideologies after incarceration?</p>
 <p>In this study, I plan to examine what political beliefs (<code>stance_on_assault_weapons_ban</code>, <code>stance_on_marijuana_legalization</code>, <code>stance_on_tightening_border_security</code>, and<code>stance_on_raise_min_wage</code>) on criminal justice may contribute to the change in political views after incarceration (<code>politics_changed_since_incarcerated</code>).</p>
 <p>My null hypothesis is that the aforementioned political beliefs will not contribute to the change in political ideologies after incarceration.</p>
 <p>Political beliefs in <code>stance_on_assault_weapons_ban</code>, <code>stance_on_marijuana_legalization</code>, <code>stance_on_tightening_border_security</code>, and<code>stance_on_raise_min_wage</code> are measured in “Strongly support”, “Support”, “Undecided”, “Oppose”, “Strongly oppose” and are represented by numeric values <code>2</code>, <code>1</code>, <code>0</code>, <code>-1</code>, <code>-2</code> respectively. And change in political ideologies (<code>politics_changed_since_incarcerated</code>) is measured in “Yes”, “No”, “NA”, which I categorized into numerical values <code>1</code> for “Yes” and <code>0</code> for “No”.</p>
