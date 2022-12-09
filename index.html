@@ -115,7 +115,7 @@ code span.wa { color: #5e5e5e; font-style: italic; } /* Warning */
   <!--/radix_placeholder_rmarkdown_metadata-->
   
   <script type="text/json" id="radix-resource-manifest">
-  {"type":"character","attributes":{},"value":["Coup/codebook.pdf","Coup/coup.csv","Coup/README.md","data/incarcerated_survey_questions-marshallproject_slate-march_2019.csv","data/response.csv","histogram.png","index_files/anchor-4.2.2/anchor.min.js","index_files/bowser-1.9.3/bowser.min.js","index_files/distill-2.2.21/template.v2.js","index_files/figure-html5/unnamed-chunk-6-1.png","index_files/figure-html5/unnamed-chunk-7-1.png","index_files/header-attrs-2.16/header-attrs.js","index_files/header-attrs-2.17/header-attrs.js","index_files/jquery-3.6.0/jquery-3.6.0.js","index_files/jquery-3.6.0/jquery-3.6.0.min.js","index_files/jquery-3.6.0/jquery-3.6.0.min.map","index_files/popper-2.6.0/popper.min.js","index_files/tippy-6.2.7/tippy-bundle.umd.min.js","index_files/tippy-6.2.7/tippy-light-border.css","index_files/tippy-6.2.7/tippy.css","index_files/tippy-6.2.7/tippy.umd.min.js","index_files/webcomponents-2.0.0/webcomponents.js"]}
+  {"type":"character","attributes":{},"value":["change_barplot.png","Coup/codebook.pdf","Coup/coup.csv","Coup/README.md","data/incarcerated_survey_questions-marshallproject_slate-march_2019.csv","data/response.csv","histogram.png","index_files/anchor-4.2.2/anchor.min.js","index_files/bowser-1.9.3/bowser.min.js","index_files/distill-2.2.21/template.v2.js","index_files/figure-html5/unnamed-chunk-2-1.png","index_files/figure-html5/unnamed-chunk-4-1.png","index_files/figure-html5/unnamed-chunk-6-1.png","index_files/figure-html5/unnamed-chunk-7-1.png","index_files/header-attrs-2.16/header-attrs.js","index_files/header-attrs-2.17/header-attrs.js","index_files/jquery-3.6.0/jquery-3.6.0.js","index_files/jquery-3.6.0/jquery-3.6.0.min.js","index_files/jquery-3.6.0/jquery-3.6.0.min.map","index_files/popper-2.6.0/popper.min.js","index_files/tippy-6.2.7/tippy-bundle.umd.min.js","index_files/tippy-6.2.7/tippy-light-border.css","index_files/tippy-6.2.7/tippy.css","index_files/tippy-6.2.7/tippy.umd.min.js","index_files/webcomponents-2.0.0/webcomponents.js","marijuana_barplot.png"]}
   </script>
   <!--radix_placeholder_navigation_in_header-->
   <!--/radix_placeholder_navigation_in_header-->
@@ -1523,9 +1523,9 @@ code span.wa { color: #5e5e5e; font-style: italic; } /* Warning */
 <span><span class='va'>cj</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://readr.tidyverse.org/reference/read_delim.html'>read_csv</a></span><span class='op'>(</span><span class='st'>"data/response.csv"</span><span class='op'>)</span></span></code></pre>
 </div>
 </div>
-<h2 id="introduction">Introduction</h2>
+<h2 id="introduction">1. Introduction</h2>
 <p>Criminal justice and related policies always have been the center of U.S. political debates and elections. In the most recent 2022 U.S. midterm elections, topics such as legalization of marijuana, criminalization of abortion, and prison labor have all caught public attention (<a href="https://www.themarshallproject.org/2022/11/12/7-key-criminal-justice-takeaways-from-the-midterms" class="uri">https://www.themarshallproject.org/2022/11/12/7-key-criminal-justice-takeaways-from-the-midterms</a>). Yet very few policy makers have personal experience with incarceration. Then, for the incarcerated, how do stances on topics related to criminal justice relate to a change in the criminals’ political ideologies after incarceration? In this report, I examine this question by analyzing the correlation between criminals’ stances on political issues and whether their political ideologies have changed after incarceration. For further elaboration, I specifically examines the criminals’ stances on assault weapon ban, marijuana legalization, tightening border security, and raising minimum wages and how they relate to whether their political ideologies have changed after incarceration. My null hypothesis is that political stances on the aforementioned issues will not contribute to the change in political ideologies after incarceration. Through this report, I hope to bring in a new perspective on criminal justice, one coming from the point of views of the incarcerated.</p>
-<h2 id="data-description">Data Description</h2>
+<h2 id="data-description">2. Data Description</h2>
 <p>This project is based on the Marshall Project’s ongoing survey of the political views of incarcertated people in American prisons and jails:</p>
 <blockquote>
 <p>Bartley, Lawrence, Nicole Lewis, and Anna Flagg. 2017. “<a href="https://www.themarshallproject.org/2020/03/11/how-we-pulled-off-a-groundbreaking-political-survey-behind-bars">How We Pulled Off A Groundbreaking Political Survey Behind Bars.</a>” The Marshall Project.</p>
@@ -1544,14 +1544,6 @@ code span.wa { color: #5e5e5e; font-style: italic; } /* Warning */
 </tr>
 </thead>
 <tbody>
-<tr class="odd">
-<td style="text-align: left;"><code>identifies_as_man</code></td>
-<td style="text-align: left;">does the respondent identify as man: <em>TRUE</em>, <em>FALSE</em>, <em>NA</em> if withheld</td>
-</tr>
-<tr class="even">
-<td style="text-align: left;"><code>identifies_as_woman</code></td>
-<td style="text-align: left;">does the respondent identify as woman: <em>TRUE</em>, <em>FALSE</em>, <em>NA</em> if withheld</td>
-</tr>
 <tr class="odd">
 <td style="text-align: left;"><code>party</code></td>
 <td style="text-align: left;">the respondent’s party affiliation</td>
@@ -1578,26 +1570,8 @@ code span.wa { color: #5e5e5e; font-style: italic; } /* Warning */
 </tr>
 </tbody>
 </table>
-<ol start="2" type="1">
-<li>a data section that briefly describes the data source, describes how the key dependent and independent variables are measured (e.g., a survey, statistical model, or expert coding), and also produces a plot that summarizes the dependent variable;</li>
-<li>a results section that contains a scatterplot, barplot, or boxplot of the main relationship of interest and output for the main regression of interest; and</li>
-<li>a brief (one paragraph) concluding section that summarizes your results, assesses the extent to which you find support for your hypothesis, describes limitations of your analysis and threats to inference, and states how your analysis could be improved (e.g., improved data that would be useful to collect).</li>
-</ol>
-<h2 id="project-proposal">Project Proposal</h2>
-<p>What political beliefs on criminal justices are related to the change criminals’ political ideologies after incarceration?</p>
-<p>In this study, I plan to examine what political beliefs (<code>stance_on_assault_weapons_ban</code>, <code>stance_on_marijuana_legalization</code>, <code>stance_on_tightening_border_security</code>, and<code>stance_on_raise_min_wage</code>) on criminal justice may contribute to the change in political views after incarceration (<code>politics_changed_since_incarcerated</code>).</p>
-<p>My null hypothesis is that the aforementioned political beliefs will not contribute to the change in political ideologies after incarceration.</p>
-<p>Political beliefs in <code>stance_on_assault_weapons_ban</code>, <code>stance_on_marijuana_legalization</code>, <code>stance_on_tightening_border_security</code>, and<code>stance_on_raise_min_wage</code> are measured in “Strongly support”, “Support”, “Undecided”, “Oppose”, “Strongly oppose” and are represented by numeric values <code>2</code>, <code>1</code>, <code>0</code>, <code>-1</code>, <code>-2</code> respectively. And change in political ideologies (<code>politics_changed_since_incarcerated</code>) is measured in “Yes”, “No”, “NA”, which I categorized into numerical values <code>1</code> for “Yes” and <code>0</code> for “No”.</p>
-<p>Additional explanatory variables (all categorical variables) that I used later in my project include:
-Gender – measured in TRUE and FALSE in <code>identifies_as_man</code> and <code>identifies_as_woman</code>
-Race – measured in TRUE and FALSE in <code>identifies_as_hispanic_or_latinx</code>, <code>identifies_as_black</code>, <code>identifies_as_white</code>
-Party – measured in Republican, measured in The Republican party, The Democratic party, Independent, NA in <code>party</code>
-how often officers act in their favor – measured in Always, Very often, Sometimes, Rarely, Never,<br />
-Don’t know / No opinion, NA in <code>how_often_officials_act_in_your_interest</code>
-How long respondent has been incarcerated in their current facility – measured in 10 years or less, Over 10 years, NA in <code>length_in_this_facility</code>
-Whether incarceration changed their political ideas – measured in Yes, No, NA in <code>politics_changed_since_incarcerated</code></p>
-<p>After conducting a linear regression with <code>politics_changed_since_incarcerated</code> as my outcome variable, and <code>stance_on_assault_weapons_ban</code>, <code>stance_on_marijuana_legalization</code>, <code>stance_on_tightening_border_security</code>, and<code>stance_on_raise_min_wage</code>as my explanatory variable, I can either reject or not reject my null hypothesis (whether political ideologies changed or not) based on if the p-value is small enough. I can observe whether political stances will positively or negatively impact <code>politics_changed_since_incarcerated</code>. If the linear regression has a positive slope, it means that political stances will positively impact <code>politics_changed_since_incarcerated</code>, and vice versa.</p>
-<h2 id="tidying-data">Tidying data</h2>
+<h3 id="tidying-data">Tidying data</h3>
+<p>In the following section, I selected the aforementioned variables and tidied the data. I simplified the names of these variables, and numericalized the categorical variables. “Strongly support”, “Support”, “Undecided”, “Oppose”, “Strongly oppose” are represented by numeric values <code>2</code>, <code>1</code>, <code>0</code>, <code>-1</code>, <code>-2</code>. “Yes”, “No”, “NA” are I categorized into <code>1</code> for “Yes” and <code>0</code> for “No”, with “NA” dropped.</p>
 <div class="layout-chunk" data-layout="l-body">
 <div class="sourceCode">
 <pre class="sourceCode r"><code class="sourceCode r"><span><span class='va'>cj_tidy</span> <span class='op'>&lt;-</span> <span class='va'>cj</span> <span class='op'>|&gt;</span></span>
@@ -1632,7 +1606,6 @@ Whether incarceration changed their political ideas – measured in Yes, No, NA 
 <span>         change <span class='op'>=</span> <span class='fu'><a href='https://dplyr.tidyverse.org/reference/if_else.html'>if_else</a></span><span class='op'>(</span><span class='va'>politics_changed_since_incarcerated</span> <span class='op'>==</span> <span class='st'>"Yes"</span>, <span class='fl'>1</span>, <span class='fl'>0</span><span class='op'>)</span><span class='op'>)</span> <span class='op'>|&gt;</span></span>
 <span>  <span class='fu'><a href='https://dplyr.tidyverse.org/reference/select.html'>select</a></span><span class='op'>(</span><span class='va'>party</span>, <span class='va'>change</span>, <span class='va'>weapons_ban</span>, <span class='va'>marijuana</span>, <span class='va'>border_security</span>, <span class='va'>min_wage</span><span class='op'>)</span> <span class='op'>|&gt;</span></span>
 <span>  <span class='fu'><a href='https://tidyr.tidyverse.org/reference/drop_na.html'>drop_na</a></span><span class='op'>(</span><span class='op'>)</span></span>
-<span></span>
 <span><span class='va'>cj_tidy</span></span></code></pre>
 </div>
 <pre><code># A tibble: 7,600 × 6
@@ -1650,9 +1623,23 @@ Whether incarceration changed their political ideas – measured in Yes, No, NA 
 10 Other                     0           1         1         2      -2
 # … with 7,590 more rows, and abbreviated variable names
 #   ¹​border_security, ²​min_wage</code></pre>
+<div class="sourceCode">
+<pre class="sourceCode r"><code class="sourceCode r"><span><span class='va'>change_bar</span> <span class='op'>&lt;-</span> <span class='va'>cj_tidy</span> <span class='op'>|&gt;</span></span>
+<span>  <span class='fu'><a href='https://ggplot2.tidyverse.org/reference/ggplot.html'>ggplot</a></span><span class='op'>(</span><span class='fu'><a href='https://ggplot2.tidyverse.org/reference/aes.html'>aes</a></span><span class='op'>(</span>x <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/factor.html'>factor</a></span><span class='op'>(</span><span class='va'>change</span><span class='op'>)</span><span class='op'>)</span><span class='op'>)</span> <span class='op'>+</span> <span class='fu'><a href='https://ggplot2.tidyverse.org/reference/geom_bar.html'>geom_bar</a></span><span class='op'>(</span><span class='op'>)</span> <span class='op'>+</span></span>
+<span>  <span class='fu'><a href='https://ggplot2.tidyverse.org/reference/labs.html'>labs</a></span><span class='op'>(</span>title <span class='op'>=</span> <span class='st'>"Bar Plot Distribution of Reponsdents Political Ideology Changes"</span>,</span>
+<span>       x <span class='op'>=</span> <span class='st'>"Change in Political Ideology"</span>,</span>
+<span>       y <span class='op'>=</span> <span class='st'>"Count of Change in Political Ideologies"</span><span class='op'>)</span> <span class='op'>+</span></span>
+<span>  <span class='fu'><a href='https://ggplot2.tidyverse.org/reference/scale_discrete.html'>scale_x_discrete</a></span><span class='op'>(</span>labels <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"No"</span>, <span class='st'>"Yes"</span><span class='op'>)</span><span class='op'>)</span></span>
+<span></span>
+<span><span class='fu'><a href='https://ggplot2.tidyverse.org/reference/ggsave.html'>ggsave</a></span><span class='op'>(</span><span class='st'>"change_barplot.png"</span>, width <span class='op'>=</span> <span class='fl'>10</span>, height <span class='op'>=</span> <span class='fl'>5</span><span class='op'>)</span></span></code></pre>
 </div>
-<h2 id="data-visualization">Data Visualization</h2>
-<h3 id="regression-model-1">Regression Model 1</h3>
+</div>
+<p><img src="change_barplot.png" /></p>
+<h2 id="result-regressions">3. Result: Regressions</h2>
+<h3 id="model-1">Model 1</h3>
+<p>This regression examines what beliefs on criminal justice may contribute to the change in political ideologies after incarceration.
+Null hypothesis: Political beliefs on weapon ban, marijuana legalization, tightening border security, and raising minimum wage will not contribute to the change in political ideologies after incarceration.</p>
+<p>After conducting a linear regression with <code>change</code> as my outcome variable, and <code>weapons_ban</code>, <code>marijuana</code>, <code>border_security</code>, and<code>min_wage</code>as my explanatory variable, I can either reject or not reject my null hypothesis (whether political ideologies changed or not) based on if the p-value is small enough. I can observe whether political stances will positively or negatively impact <code>change</code>. If the linear regression has a positive slope, it means that political stances will positively impact <code>change</code>, and vice versa.</p>
 <div class="layout-chunk" data-layout="l-body">
 <div class="sourceCode">
 <pre class="sourceCode r"><code class="sourceCode r"><span><span class='kw'><a href='https://rdrr.io/r/base/library.html'>library</a></span><span class='op'>(</span><span class='va'><a href='https://broom.tidymodels.org/'>broom</a></span><span class='op'>)</span></span>
@@ -1741,9 +1728,10 @@ Multiple R-squared:  0.01445,   Adjusted R-squared:  0.01393
 F-statistic: 27.84 on 4 and 7595 DF,  p-value: &lt; 2.2e-16</code></pre>
 <div class="sourceCode">
 <pre class="sourceCode r"><code class="sourceCode r"><span><span class='fu'><a href='https://generics.r-lib.org/reference/tidy.html'>tidy</a></span><span class='op'>(</span><span class='va'>change_multi</span>, conf.int <span class='op'>=</span> <span class='cn'>TRUE</span>, conf.level <span class='op'>=</span> <span class='fl'>0.95</span><span class='op'>)</span><span class='op'>|&gt;</span></span>
-<span>  <span class='fu'>knitr</span><span class='fu'>::</span><span class='fu'><a href='https://rdrr.io/pkg/knitr/man/kable.html'>kable</a></span><span class='op'>(</span>digits <span class='op'>=</span> <span class='fl'>3</span><span class='op'>)</span></span></code></pre>
+<span>  <span class='fu'>knitr</span><span class='fu'>::</span><span class='fu'><a href='https://rdrr.io/pkg/knitr/man/kable.html'>kable</a></span><span class='op'>(</span>digits <span class='op'>=</span> <span class='fl'>3</span>, caption <span class='op'>=</span> <span class='st'>"Model 1 Regression Summary"</span><span class='op'>)</span></span></code></pre>
 </div>
 <table>
+<caption><span id="tab:unnamed-chunk-3">Table 1: </span>Model 1 Regression Summary</caption>
 <colgroup>
 <col style="width: 22%" />
 <col style="width: 12%" />
@@ -1813,16 +1801,35 @@ F-statistic: 27.84 on 4 and 7595 DF,  p-value: &lt; 2.2e-16</code></pre>
 </tbody>
 </table>
 </div>
-<p>This regression examines what beliefs on criminal justice may contribute to the change in political ideologies after incarceration.
-Null hypothesis: Political beliefs on weapon ban, marijuana legalization, tightening border security, and raising minimum wage will not contribute to the change in political ideologies after incarceration.
-Since the independent variable (change in political ideology) is a binary variable, the point estimate of 0.459 is the average outcome when all other predictors (stance on tighten weapon bans, marijuana legalization, tighten border security, and raise minimum wage) equal to 0. This suggest that even when a prisoner is undecided on all these four issues, there is on average a 46% of chance that his/her political ideology will change after incarceration. When the prisoner is undecided on marijuana legalization, tighten border security, and raise minimum wage, the more strongly he/she support assault weapons ban (the support increase by 1 unit), the predicted change in political ideologies increase by approximately 3.5%. Similar analysis can be applied to marijuana legalization (predicted change in political ideologies decreases by 0.2%), tighten border security (predicted change in political ideologies increases by 1.3%), and raise minimum wage (predicted change in political ideologies increases by 1.7%). Hence, opinions on assault weapon bans has the highest impact on the predicted change in political ideologies after incarceration. However, this regression model can be further improved, as it has a R-squared value of 0.014, suggesting that only 1.4% of the observed variations is accounted for in this regression model.</p>
+<p>Since the response variable (change in political ideology) is a binary variable, the point estimate of 0.459 is the average outcome when all other predictors (stance on tighten weapon bans, marijuana legalization, tighten border security, and raise minimum wage) equal to 0. This suggest that even when a prisoner is undecided on all these four issues, there is on average a 46% of chance that his/her political ideology will change after incarceration. When the prisoner is undecided on marijuana legalization, tighten border security, and raise minimum wage, the more strongly he/she support assault weapons ban (the support increase by 1 unit), the predicted change in political ideologies increase by approximately 3.5%. Similar analysis can be applied to marijuana legalization (predicted change in political ideologies decreases by 0.2%), tighten border security (predicted change in political ideologies increases by 1.3%), and raise minimum wage (predicted change in political ideologies increases by 1.7%). Hence, opinions on assault weapon bans has the highest impact on the predicted change in political ideologies after incarceration. However, this regression model can be further improved, as it has a R-squared value of 0.014, suggesting that only 1.4% of the observed variations is accounted for in this regression model.</p>
 <p>After conducting a hypothesis testing on the 95% confidence interval with the alpha-value being 0.05, we can conclude the following evaluation of the p-value:
 When the prisoners’ beliefs on marijuana legalization, tightening border security, and raising minimum wage remain the same, there is strong enough evidence to reject the null hypothesis and thus we can state that beliefs on weapon ban will contribute to the change in political ideology (p-value for <code>weapons_ban</code> is <code>0</code>)
 When the prisoners’ beliefs on weapon ban, tightening border security, and raising minimum wage remain the same, there is not strong enough evidence to reject the null hypothesis and thus we can state that beliefs on marijuana legalization ban will not contribute to the change in political ideology (p-value for <code>marijuana</code> is <code>0.773</code>)
 When the prisoners’ beliefs on weapon ban, marijuana legalization, and raising minimum wage remain the same, there is strong enough evidence to reject the null hypothesis and thus we can state that beliefs on tightening border security ban will contribute to the change in political ideology (p-value for <code>border_security</code> is <code>0.002</code>)
 When the prisoners’ beliefs on marijuana legalization, tightening border security, and weapon ban remain the same, there is strong enough evidence to reject the null hypothesis and thus we can state that beliefs on raising minimum wage will contribute to the change in political ideology (p-value for <code>min_wage</code> is <code>0.003</code>)</p>
-<p>In conclusion, in this multiple regression model, there is strong enough evidence to support that the prisoners’ political stances on weapon bans, tightening border security, and raising minimum wages will contribute to the change in political ideologies, whereas there is not strong enough evidence to state that their stances on marijuana legalization will.</p>
-<h3 id="regression-model-2-accounting-for-party-afflication">Regression Model 2: Accounting for Party Afflication</h3>
+<p>In conclusion, in this multiple regression model, there is strong enough evidence to support that the prisoners’ political stances on weapon bans, tightening border security, and raising minimum wages will contribute to the change in political ideologies, whereas there is not strong enough evidence to state that their stances on marijuana legalization will. However, since this is an observational study and not a controlled randomized experiment, this conclusion cannot be generalized.</p>
+<div class="layout-chunk" data-layout="l-body">
+<div class="sourceCode">
+<pre class="sourceCode r"><code class="sourceCode r"><span><span class='va'>marijuana_bar</span> <span class='op'>&lt;-</span> <span class='va'>cj_tidy</span> <span class='op'>|&gt;</span></span>
+<span>  <span class='fu'><a href='https://ggplot2.tidyverse.org/reference/ggplot.html'>ggplot</a></span><span class='op'>(</span><span class='fu'><a href='https://ggplot2.tidyverse.org/reference/aes.html'>aes</a></span><span class='op'>(</span>x <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/factor.html'>factor</a></span><span class='op'>(</span><span class='va'>marijuana</span><span class='op'>)</span><span class='op'>)</span><span class='op'>)</span> <span class='op'>+</span> </span>
+<span>  <span class='fu'><a href='https://ggplot2.tidyverse.org/reference/geom_bar.html'>geom_bar</a></span><span class='op'>(</span><span class='op'>)</span> <span class='op'>+</span></span>
+<span>  <span class='fu'><a href='https://ggplot2.tidyverse.org/reference/labs.html'>labs</a></span><span class='op'>(</span>title <span class='op'>=</span> <span class='st'>"Bar Plot Distribution of Respondents' Support of Marijuana Legalization"</span>,</span>
+<span>       x <span class='op'>=</span> <span class='st'>"Support of Marijuana Legalization"</span>,</span>
+<span>       y <span class='op'>=</span> <span class='st'>"Count of Change in Political Ideologies"</span><span class='op'>)</span> <span class='op'>+</span></span>
+<span>  <span class='fu'><a href='https://ggplot2.tidyverse.org/reference/scale_discrete.html'>scale_x_discrete</a></span><span class='op'>(</span>labels <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"Strongly Oppose"</span>, <span class='st'>"Oppose"</span>, <span class='st'>"Undecided"</span>, <span class='st'>"Support"</span>, <span class='st'>"Strongly Support"</span><span class='op'>)</span><span class='op'>)</span></span>
+<span></span>
+<span><span class='fu'><a href='https://ggplot2.tidyverse.org/reference/ggsave.html'>ggsave</a></span><span class='op'>(</span><span class='st'>"marijuana_barplot.png"</span>, width <span class='op'>=</span> <span class='fl'>10</span>, height <span class='op'>=</span> <span class='fl'>5</span><span class='op'>)</span></span>
+<span></span>
+<span><span class='fu'><a href='https://rdrr.io/r/stats/cor.html'>cor</a></span><span class='op'>(</span><span class='va'>cj_tidy</span><span class='op'>$</span><span class='va'>change</span>, <span class='va'>cj_tidy</span><span class='op'>$</span><span class='va'>marijuana</span>, use <span class='op'>=</span> <span class='st'>"pairwise"</span><span class='op'>)</span></span></code></pre>
+</div>
+<pre><code>[1] -0.002526195</code></pre>
+</div>
+<p><img src="marijuana_barplot.png" />
+The above bar-plot further examines the relationship of the change in political ideologies and the support for marijuana legalization. Although there is not strong enough evidence to state that beliefs on marijuana legalization ban will contribute to the change in political ideology, it appears that respondents who strongly support and support marijuana legalization tend to change their political ideologies. However, the correlation coefficient of <code>change</code> and <code>marijuana</code> is -0.002526195, suggesting a weak and negative linear relationship between the respondents’ support for marijuana legalization and whether their political ideologies have changed since incarceration. In comparison, <code>weapons_ban</code> has a correlation coefficient of 0.11 with <code>change</code>, <code>border_security</code> 0.035, and ‘min_wage` 0.048, all of which exhibits a positive linear relationship with whether the repondents’ political ideologies have changed, although such relationships are not strong.</p>
+<h3 id="model-2-accounting-for-party-afflication">Model 2: Accounting for Party Afflication</h3>
+<p>The previous regression model only measures whether the criminals’ political beliefs have changed after incarceration. Hence, this multiple regression model accounts for their current party affiliation and examines whether their current party affiliation contributes to their change in political ideologies.
+Null hypothesis: Party affiliation is not related to the change in criminals’ political ideologies after incarceration
+<code>party</code> is a categorical value measured in “Other”, “The Democratic party”, “The Republican party”, and “Independent”. “Independent” is the baseline in this model.</p>
 <div class="layout-chunk" data-layout="l-body">
 <div class="sourceCode">
 <pre class="sourceCode r"><code class="sourceCode r"><span><span class='va'>party_multi</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/stats/lm.html'>lm</a></span><span class='op'>(</span><span class='va'>change</span> <span class='op'>~</span> <span class='va'>weapons_ban</span> <span class='op'>+</span> <span class='va'>marijuana</span> <span class='op'>+</span> <span class='va'>border_security</span> <span class='op'>+</span> <span class='va'>min_wage</span> <span class='op'>+</span> <span class='fu'><a href='https://rdrr.io/r/base/factor.html'>factor</a></span><span class='op'>(</span><span class='va'>party</span><span class='op'>)</span>, data <span class='op'>=</span> <span class='va'>cj_tidy</span><span class='op'>)</span></span>
@@ -1878,17 +1885,117 @@ Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&
 Residual standard error: 0.4952 on 7592 degrees of freedom
 Multiple R-squared:  0.01894,   Adjusted R-squared:  0.01804 
 F-statistic: 20.94 on 7 and 7592 DF,  p-value: &lt; 2.2e-16</code></pre>
+<div class="sourceCode">
+<pre class="sourceCode r"><code class="sourceCode r"><span><span class='fu'><a href='https://generics.r-lib.org/reference/tidy.html'>tidy</a></span><span class='op'>(</span><span class='va'>party_multi</span>, conf.int <span class='op'>=</span> <span class='cn'>TRUE</span>, conf.level <span class='op'>=</span> <span class='fl'>0.95</span><span class='op'>)</span><span class='op'>|&gt;</span></span>
+<span>  <span class='fu'>knitr</span><span class='fu'>::</span><span class='fu'><a href='https://rdrr.io/pkg/knitr/man/kable.html'>kable</a></span><span class='op'>(</span>digits <span class='op'>=</span> <span class='fl'>3</span>, caption <span class='op'>=</span> <span class='st'>"Model 2 Regression Summary"</span><span class='op'>)</span></span></code></pre>
 </div>
-<p>The previous regression model only measures whether the criminals’ political beliefs have changed after incarceration. Hence, this multiple regression model accounts for their current party affiliation and examines whether their current party affiliation contributes to their change in political ideologies.
-Null hypothesis: Party affiliation is not related to the change in criminals’ political ideologies after incarceration
-<code>party</code> is a categorical value measured in “Other”, “The Democratic party”, “The Republican party”, and “Independent”. “Independent” is the baseline in this model.</p>
-<p>When the prisoners’ four political beliefs (<code>weapons_ban</code>, <code>marijuana</code>, <code>border_security</code>, and <code>min_wage</code>) equal to 0 (i.e. they are undecided about all these four issues), the predicted change of party affiliation percentage from Independent to Other is -8.36%, to Democratic party is -1.79%, and to Republican party is 1.71%. This means that criminals will be 8.36% less like to be in other parties than independent, 1.79% less likely to be in the Democratic party, and 1.71% more likely to be in the Republican party after incarceration.</p>
+<table>
+<caption><span id="tab:unnamed-chunk-5">Table 2: </span>Model 2 Regression Summary</caption>
+<colgroup>
+<col style="width: 37%" />
+<col style="width: 10%" />
+<col style="width: 11%" />
+<col style="width: 11%" />
+<col style="width: 8%" />
+<col style="width: 10%" />
+<col style="width: 11%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th style="text-align: left;">term</th>
+<th style="text-align: right;">estimate</th>
+<th style="text-align: right;">std.error</th>
+<th style="text-align: right;">statistic</th>
+<th style="text-align: right;">p.value</th>
+<th style="text-align: right;">conf.low</th>
+<th style="text-align: right;">conf.high</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">(Intercept)</td>
+<td style="text-align: right;">0.477</td>
+<td style="text-align: right;">0.014</td>
+<td style="text-align: right;">34.615</td>
+<td style="text-align: right;">0.000</td>
+<td style="text-align: right;">0.450</td>
+<td style="text-align: right;">0.504</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">weapons_ban</td>
+<td style="text-align: right;">0.035</td>
+<td style="text-align: right;">0.004</td>
+<td style="text-align: right;">8.770</td>
+<td style="text-align: right;">0.000</td>
+<td style="text-align: right;">0.027</td>
+<td style="text-align: right;">0.043</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">marijuana</td>
+<td style="text-align: right;">-0.002</td>
+<td style="text-align: right;">0.005</td>
+<td style="text-align: right;">-0.317</td>
+<td style="text-align: right;">0.751</td>
+<td style="text-align: right;">-0.012</td>
+<td style="text-align: right;">0.009</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">border_security</td>
+<td style="text-align: right;">0.008</td>
+<td style="text-align: right;">0.005</td>
+<td style="text-align: right;">1.705</td>
+<td style="text-align: right;">0.088</td>
+<td style="text-align: right;">-0.001</td>
+<td style="text-align: right;">0.017</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">min_wage</td>
+<td style="text-align: right;">0.017</td>
+<td style="text-align: right;">0.006</td>
+<td style="text-align: right;">3.005</td>
+<td style="text-align: right;">0.003</td>
+<td style="text-align: right;">0.006</td>
+<td style="text-align: right;">0.028</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">factor(party)Other</td>
+<td style="text-align: right;">-0.084</td>
+<td style="text-align: right;">0.017</td>
+<td style="text-align: right;">-4.919</td>
+<td style="text-align: right;">0.000</td>
+<td style="text-align: right;">-0.117</td>
+<td style="text-align: right;">-0.050</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">factor(party)The Democratic party</td>
+<td style="text-align: right;">-0.018</td>
+<td style="text-align: right;">0.015</td>
+<td style="text-align: right;">-1.171</td>
+<td style="text-align: right;">0.242</td>
+<td style="text-align: right;">-0.048</td>
+<td style="text-align: right;">0.012</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">factor(party)The Republican party</td>
+<td style="text-align: right;">0.017</td>
+<td style="text-align: right;">0.016</td>
+<td style="text-align: right;">1.072</td>
+<td style="text-align: right;">0.284</td>
+<td style="text-align: right;">-0.014</td>
+<td style="text-align: right;">0.049</td>
+</tr>
+</tbody>
+</table>
+</div>
+<p>When the prisoners’ four political beliefs (<code>weapons_ban</code>, <code>marijuana</code>, <code>border_security</code>, and <code>min_wage</code>) equal to 0 (i.e. they are undecided about all these four issues), the predicted change of party affiliation percentage from Independent to Other is -8.36%, to Democratic party is -1.79%, and to Republican party is 1.71%. This means that criminals will be 8.36% less like to be in other parties than Independent, 1.79% less likely to be in the Democratic party, and 1.71% more likely to be in the Republican party after incarceration.</p>
 <p>After conducting the hypothesis testing on a 95% confidence interval, we can conclude the following based on the p-value:
 When the prisoners’ beliefs on weapon ban, marijuana legalization, tightening border security, and raising minimum wage remain the same, there is strong enough evidence to reject the null hypothesis and thus state being in the Other party is related to the change in criminals’ political ideologies after incarceration (p-value for <code>factor(party)Other</code> is <code>8.88e-07</code>)
 When the prisoners’ beliefs on weapon ban, marijuana legalization, tightening border security, and raising minimum wage remain the same, there is not strong enough evidence to reject the null hypothesis and thus we can state being in the Democratic party is not related to the change in criminals’ political ideologies after incarceration (p-value for <code>factor(party)The Democratic party</code> is <code>0.24164</code>)
 When the prisoners’ beliefs on weapon ban, marijuana legalization, tightening border security, and raising minimum wage remain the same, there is not strong enough evidence to reject the null hypothesis and thus we can state being in the Republican party is not related to the change in criminals’ political ideologies after incarceration (p-value for <code>factor(party)The Republican party</code> is <code>0.28390</code>)</p>
 <p>In conclusion, in this multiple regression model, there is strong enough evidence to support that being in the Other party now is related to the change in political ideologies compared to being in the Independent party, whereas there is not strong enough evidence to state that being in the Democratic and Republican parties is related to the change in political ideologies compared to being in the Independent party.</p>
-<div class="sourceCode" id="cb5"><pre class="sourceCode r distill-force-highlighting-css"><code class="sourceCode r"></code></pre></div>
+<h2 id="conclusion">Conclusion</h2>
+<p>In this project, I examined whether incarcerated criminals’ stances on assault weapon ban, marijuana legalization, tightening border control, and raising minimum wages relate to a change in the criminals’ political ideologies after incarceration. In the first multiple regression model, there is strong enough evidence to state that the prisoners’ political stances on weapon bans, tightening border security, and raising minimum wages is related to the change in political ideologies, whereas there is not strong enough evidence to state that their stances on marijuana legalization will. In the second multiple regression model that takes current party affiliation of the respondents, there is strong enough evidence to support that being in the other party now is related to the change in political ideologies compared to being in the Independent party, whereas there is not strong enough evidence to state that being in the Democratic and Republican parties is related to the change in political ideologies compared to being in the Independent party. However, since this report is based on an observational study, instead of a controlled, randomized experiment, the conclusions cannot be generalized beyond the scope of this study, nor could we assume general causal relations. There could also be potential confounding variables that have not been taken into account of this specific report, such as the years that the prisoners have spent incarcerated, their initial political affiliation (not surveyed), where they are from, etc. Hence, for further research, a before-and-after design observational study would be helpful to analyze the change of political ideologies of the same respondent before and after incarceration.</p>
+<div class="sourceCode" id="cb6"><pre class="sourceCode r distill-force-highlighting-css"><code class="sourceCode r"></code></pre></div>
 <!--radix_placeholder_article_footer-->
 <!--/radix_placeholder_article_footer-->
 </div>

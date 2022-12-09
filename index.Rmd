@@ -79,8 +79,10 @@ change_bar <- cj_tidy |>
        x = "Change in Political Ideology",
        y = "Count of Change in Political Ideologies") +
   scale_x_discrete(labels = c("No", "Yes"))
-change_bar
+
+ggsave("change_barplot.png", width = 10, height = 5)
 ```
+![](change_barplot.png)
 
 ## 3. Result: Regressions
 ### Model 1
@@ -102,7 +104,7 @@ change_multi |>
 summary(change_multi)
 
 tidy(change_multi, conf.int = TRUE, conf.level = 0.95)|>
-  knitr::kable(digits = 3)
+  knitr::kable(digits = 3, caption = "Model 1 Regression Summary")
 ```
 Since the response variable (change in political ideology) is a binary variable, the point estimate of 0.459 is the average outcome when all other predictors (stance on tighten weapon bans, marijuana legalization, tighten border security, and raise minimum wage) equal to 0. This suggest that even when a prisoner is undecided on all these four issues, there is on average a 46% of chance that his/her political ideology will change after incarceration. When the prisoner is undecided on marijuana legalization, tighten border security, and raise minimum wage, the more strongly he/she support assault weapons ban (the support increase by 1 unit), the predicted change in political ideologies increase by approximately 3.5%. Similar analysis can be applied to marijuana legalization (predicted change in political ideologies decreases by 0.2%), tighten border security (predicted change in political ideologies increases by 1.3%), and raise minimum wage (predicted change in political ideologies increases by 1.7%). Hence, opinions on assault weapon bans has the highest impact on the predicted change in political ideologies after incarceration. However, this regression model can be further improved, as it has a R-squared value of 0.014, suggesting that only 1.4% of the observed variations is accounted for in this regression model. 
 
@@ -122,9 +124,13 @@ marijuana_bar <- cj_tidy |>
        x = "Support of Marijuana Legalization",
        y = "Count of Change in Political Ideologies") +
   scale_x_discrete(labels = c("Strongly Oppose", "Oppose", "Undecided", "Support", "Strongly Support"))
-marijuana_bar
+
+ggsave("marijuana_barplot.png", width = 10, height = 5)
+
+cor(cj_tidy$change, cj_tidy$marijuana, use = "pairwise")
 ```
-To further examine 
+![](marijuana_barplot.png)
+The above bar-plot further examines the relationship of the change in political ideologies and the support for marijuana legalization. Although there is not strong enough evidence to state that beliefs on marijuana legalization ban will contribute to the change in political ideology, it appears that respondents who strongly support and support marijuana legalization tend to change their political ideologies. However, the correlation coefficient of `change` and `marijuana` is -0.002526195, suggesting a weak and negative linear relationship between the respondents' support for marijuana legalization and whether their political ideologies have changed since incarceration. In comparison, `weapons_ban` has a correlation coefficient of 0.11 with `change`, `border_security` 0.035, and 'min_wage` 0.048, all of which exhibits a positive linear relationship with whether the repondents' political ideologies have changed, although such relationships are not strong. 
 
 ### Model 2: Accounting for Party Afflication 
 The previous regression model only measures whether the criminals' political beliefs have changed after incarceration. Hence, this multiple regression model accounts for their current party affiliation and examines whether their current party affiliation contributes to their change in political ideologies.
@@ -139,7 +145,7 @@ party_multi |>
 summary(party_multi)
 
 tidy(party_multi, conf.int = TRUE, conf.level = 0.95)|>
-  knitr::kable(digits = 3)
+  knitr::kable(digits = 3, caption = "Model 2 Regression Summary")
 ```
 
 When the prisoners' four political beliefs (`weapons_ban`, `marijuana`, `border_security`, and `min_wage`) equal to 0 (i.e. they are undecided about all these four issues), the predicted change of party affiliation percentage from Independent to Other is -8.36%, to Democratic party is -1.79%, and to Republican party is 1.71%. This means that criminals will be 8.36% less like to be in other parties than Independent, 1.79% less likely to be in the Democratic party, and 1.71% more likely to be in the Republican party after incarceration. 
@@ -151,15 +157,5 @@ When the prisoners' beliefs on weapon ban, marijuana legalization, tightening bo
 
 In conclusion, in this multiple regression model, there is strong enough evidence to support that being in the Other party now is related to the change in political ideologies compared to being in the Independent party, whereas there is not strong enough evidence to state that being in the Democratic and Republican parties is related to the change in political ideologies compared to being in the Independent party. 
 
-
-## instruction 
-A results section, including a presentation of your regression results (either a plot or a table), a separate plot of the main relationship of interest (e.g. a scatterplot of the outcome and the main independent variable), and as well as a summary and discussion of results in substantive context (a paragraph or two). 
-
-You should also interpret (in plain English) the main coefficient of interest in your regression, comment on the statistical significance of the estimated coefficient, and  say whether or not you believe the coefficient to represent a causal effect.
-
-A conclusion section, including a recap of results, discussion of limitations of the study, and how to improve the study in the future (a paragraph)
-
-
-(3) a results section that contains a scatterplot, barplot, or boxplot of the main relationship of interest and output for the main regression of interest; and 
-(4) a brief (one paragraph) concluding section that summarizes your results, assesses the extent to which you find support for your hypothesis, describes limitations of your analysis and threats to inference, and states how your analysis could be improved (e.g., improved data that would be useful to collect).
-
+## Conclusion 
+In this project, I examined whether incarcerated criminals' stances on assault weapon ban, marijuana legalization, tightening border control, and raising minimum wages relate to a change in the criminals' political ideologies after incarceration. In the first multiple regression model, there is strong enough evidence to state that the prisoners' political stances on weapon bans, tightening border security, and raising minimum wages is related to the change in political ideologies, whereas there is not strong enough evidence to state that their stances on marijuana legalization will. In the second multiple regression model that takes current party affiliation of the respondents, there is strong enough evidence to support that being in the other party now is related to the change in political ideologies compared to being in the Independent party, whereas there is not strong enough evidence to state that being in the Democratic and Republican parties is related to the change in political ideologies compared to being in the Independent party. However, since this report is based on an observational study, instead of a controlled, randomized experiment, the conclusions cannot be generalized beyond the scope of this study, nor could we assume general causal relations. There could also be potential confounding variables that have not been taken into account of this specific report, such as the years that the prisoners have spent incarcerated, their initial political affiliation (not surveyed), where they are from, etc. Hence, for further research, a before-and-after design observational study would be helpful to analyze the change of political ideologies of the same respondent before and after incarceration. 
